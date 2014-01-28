@@ -1,0 +1,24 @@
+"Updater"
+{
+	"Information"
+	{
+		"Version"
+		{
+			"Latest"	"1.2.1"
+		}
+		
+		"Notes"	"Added Simple Team Balancer ( Thanks altex )"
+		"Notes"	"Added Reset Score Player Commands"
+		"Notes" "Updated ResetScore Part"
+		"Notes" "Updated LogAction"
+		"Notes" "Removed Admin Checks ( Admin Overrides works now )"
+		"Notes" "Removed not used translations"
+	}
+	
+	"Files"
+	{
+		"Plugin"	"Path_SM/plugins/movecommands.smx"
+		"Plugin"	"Path_SM/translations/movecommands.phrases.txt"
+		"Source"	"Path_SM/scripting/movecommands.sp"
+	}
+}
