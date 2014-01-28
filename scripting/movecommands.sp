@@ -1,3 +1,14 @@
+/*
+	ToDo:
+		- Exchange Teams
+		- Swap all Players (CT/T/Both) to CT/T/Spec
+
+	Changes:
+		- Use of GetEngineVersion instead of GetFolderName
+
+
+*/
+
 #pragma semicolon 1
 
 #include <sourcemod>
@@ -14,7 +25,7 @@
 #include <cstrike>
 #define REQUIRE_EXTENSIONS
 
-#define PLUGIN_VERSION "1.2.1"
+#define PLUGIN_VERSION "1.2.54"
 
 #define UPDATE_URL    "http://update.bara.in/movecommands.txt"
 
@@ -39,7 +50,6 @@ new bool:SwapRoundEnd[MAXPLAYERS+1] = false;
 new bool:SwapPlayerDeath[MAXPLAYERS+1] = false;
 
 new String:sMoveTag[64];
-new String:sGameType[64];
 
 new TCount;
 new CTCount;
@@ -59,15 +69,16 @@ public OnPluginStart()
 	LoadTranslations("movecommands.phrases");
 	
 	if (LibraryExists("updater"))
+	{
 		Updater_AddPlugin(UPDATE_URL);
+	}
 	
-	GetGameFolderName(sGameType, sizeof(sGameType));
-	if(StrEqual(sGameType, "cstrike", false) || StrEqual(sGameType, "csgo", false))
-		PrintToServer("Plugin loaded under %s", sGameType);
-	else
+	if(GetEngineVersion() != Engine_CSS || GetEngineVersion() != Engine_CSGO)
+	{
 		SetFailState("Unsupported Game! Only CS:S and CS:GO");
+	}
 	
-	Format(sMoveTag, sizeof(sMoveTag), "%t", "MessageTag");
+	Format(sMoveTag, sizeof(sMoveTag), "%T", "MessageTag", LANG_SERVER);
 	
 	CreateConVar("movecommands_version", PLUGIN_VERSION, "Move Commands", FCVAR_PLUGIN|FCVAR_NOTIFY|FCVAR_DONTRECORD);
 	
@@ -119,13 +130,17 @@ public OnPluginStart()
 	
 	new Handle:topmenu;
 	if (LibraryExists("adminmenu") && ((topmenu = GetAdminTopMenu()) != INVALID_HANDLE))
+	{
 		OnAdminMenuReady(topmenu);
+	}
 }
 
 public OnLibraryAdded(const String:name[])
 {
 	if (StrEqual(name, "updater"))
+	{
 		Updater_AddPlugin(UPDATE_URL);
+	}
 }
 
 public OnMapStart()
@@ -136,7 +151,7 @@ public OnMapStart()
 		CTCount = 0;
 		for(new i = 1; i <= MaxClients; i++)
 		{
-			if (IsClientInGame(i))
+			if (IsClientValid(i))
 			{
 				ChangeTeamCount(GetClientTeam(i), 1);
 			}
@@ -160,7 +175,9 @@ public Event_PlayerDeath(Handle:event,const String:name[],bool:dontBroadcast)
 				SwapPlayerDeath[client] = false;
 				
 				if(GetConVarInt(hEnableResetScore))
+				{
 					ResetScore(client);
+				}
 					
 				CS_SwitchTeam(client, CS_TEAM_T);
 				CPrintToChatAll("%t", "MovedTwithoutAdmin", sMoveTag, client);
@@ -170,7 +187,9 @@ public Event_PlayerDeath(Handle:event,const String:name[],bool:dontBroadcast)
 				SwapPlayerDeath[client] = false;
 				
 				if(GetConVarInt(hEnableResetScore))
+				{
 					ResetScore(client);
+				}
 				
 				CS_SwitchTeam(client, CS_TEAM_CT);
 				CPrintToChatAll("%t", "MovedCTwithoutAdmin", sMoveTag, client);
@@ -248,7 +267,9 @@ public Event_RoundEnd(Handle:event,const String:name[],bool:dontBroadcast)
 					SwapRoundEnd[i] = false;
 					
 					if(GetConVarInt(hEnableResetScore))
+					{
 						ResetScore(i);
+					}
 					
 					CS_SwitchTeam(i, CS_TEAM_T);
 					CPrintToChatAll("%t", "MovedTwithoutAdmin", sMoveTag, i);
@@ -258,7 +279,9 @@ public Event_RoundEnd(Handle:event,const String:name[],bool:dontBroadcast)
 					SwapRoundEnd[i] = false;
 					
 					if(GetConVarInt(hEnableResetScore))
+					{
 						ResetScore(i);
+					}
 					
 					CS_SwitchTeam(i, CS_TEAM_CT);
 					CPrintToChatAll("%t", "MovedCTwithoutAdmin", sMoveTag, i);
@@ -271,32 +294,44 @@ public Event_RoundEnd(Handle:event,const String:name[],bool:dontBroadcast)
 public Action:Command_AFK(client, args)
 {
 	if(!GetConVarInt(hEnableAFK))
+	{
 		return Plugin_Handled;
+	}
 	
 	if(SwapRoundEnd[client])
+	{
 		return Plugin_Handled;
+	}
 	
 	if(SwapPlayerDeath[client])
+	{
 		return Plugin_Handled;
+	}
 	
 	if(GetClientTeam(client) != CS_TEAM_SPECTATOR)
 	{
 		ChangeClientTeam(client, CS_TEAM_SPECTATOR);
 		CPrintToChatAll("%t", "AFK", sMoveTag, client);
 	}
+
 	return Plugin_Handled;
 }
 
 public Action:Command_ResetScore(client, args)
 {
 	if(!GetConVarInt(hEnableResetScoreCommand))
+	{
 		return Plugin_Handled;
+	}
 
 	if(GetClientTeam(client) == CS_TEAM_T || GetClientTeam(client) == CS_TEAM_CT)
+	{
 		ResetScore(client);
+	}
 	else
+	{
 		CPrintToChat(client, "%t", "WrongTeam", sMoveTag);
-
+	}
 	
 	return Plugin_Handled;
 }
@@ -304,7 +339,9 @@ public Action:Command_ResetScore(client, args)
 public Action:Command_Spec(client, args)
 {
 	if(!GetConVarInt(hEnableSpec))
+	{
 		return Plugin_Handled;
+	}
 	
 	if (args < 1)
 	{
@@ -317,7 +354,9 @@ public Action:Command_Spec(client, args)
 
 	new target = FindTarget(client, arg1);
 	if (target == -1)
+	{
 		return Plugin_Handled;
+	}
 	
 	if(SwapRoundEnd[target])
 	{
@@ -340,7 +379,9 @@ public Action:Command_Spec(client, args)
 public Action:Command_Swap(client, args)
 {
 	if(!GetConVarInt(hEnableSwap))
+	{
 		return Plugin_Handled;
+	}
 	
 	if (args < 1)
 	{
@@ -353,7 +394,9 @@ public Action:Command_Swap(client, args)
 
 	new target = FindTarget(client, arg1);
 	if (target == -1)
+	{
 		return Plugin_Handled;
+	}
 	
 	if(SwapRoundEnd[target])
 	{
@@ -376,7 +419,9 @@ public Action:Command_Swap(client, args)
 public Action:Command_SwapCT(client, args)
 {
 	if(!GetConVarInt(hEnableSwapCT))
+	{
 		return Plugin_Handled;
+	}
 	
 	if (args < 1)
 	{
@@ -389,7 +434,9 @@ public Action:Command_SwapCT(client, args)
 
 	new target = FindTarget(client, arg1);
 	if (target == -1)
+	{
 		return Plugin_Handled;
+	}
 	
 	if(SwapRoundEnd[target])
 	{
@@ -412,7 +459,9 @@ public Action:Command_SwapCT(client, args)
 public Action:Command_SwapT(client, args)
 {
 	if(!GetConVarInt(hEnableSwapT))
+	{
 		return Plugin_Handled;
+	}
 	
 	if (args < 1)
 	{
@@ -425,7 +474,9 @@ public Action:Command_SwapT(client, args)
 
 	new target = FindTarget(client, arg1);
 	if (target == -1)
+	{
 		return Plugin_Handled;
+	}
 	
 	if(SwapRoundEnd[target])
 	{
@@ -448,7 +499,9 @@ public Action:Command_SwapT(client, args)
 public Action:Command_SwapRoundEnd(client, args)
 {
 	if(!GetConVarInt(hEnableSwapRoundEnd))
+	{
 		return Plugin_Handled;
+	}
 	
 	if (args < 1)
 	{
@@ -461,7 +514,9 @@ public Action:Command_SwapRoundEnd(client, args)
 
 	new target = FindTarget(client, arg1);
 	if (target == -1)
+	{
 		return Plugin_Handled;
+	}
 	
 	if(SwapRoundEnd[target])
 	{
@@ -482,7 +537,9 @@ public Action:Command_SwapRoundEnd(client, args)
 public Action:Command_SwapPlayerDeath(client, args)
 {
 	if(!GetConVarInt(hEnableSwapDeath))
+	{
 		return Plugin_Handled;
+	}
 	
 	if (args < 1)
 	{
@@ -495,7 +552,9 @@ public Action:Command_SwapPlayerDeath(client, args)
 
 	new target = FindTarget(client, arg1);
 	if (target == -1)
+	{
 		return Plugin_Handled;
+	}
 	
 	if(SwapRoundEnd[target])
 	{
@@ -516,7 +575,9 @@ public Action:Command_SwapPlayerDeath(client, args)
 public Action:Command_FSwap(client, args)
 {
 	if(!GetConVarInt(hEnableFSwap))
+	{
 		return Plugin_Handled;
+	}
 	
 	if (args < 1)
 	{
@@ -529,7 +590,9 @@ public Action:Command_FSwap(client, args)
 
 	new target = FindTarget(client, arg1);
 	if (target == -1)
+	{
 		return Plugin_Handled;
+	}
 
 	FSwitchPlayerOtherTeam(client, target);
 	return Plugin_Handled;	
@@ -546,10 +609,14 @@ public OnLibraryRemoved(const String:name[])
 public OnAdminMenuReady(Handle:topmenu)
 {
 	if(!GetConVarInt(hEnableAdminMenu))
+	{
 		return;
+	}
 	
 	if (topmenu == hAdminMenu)
+	{
 		return;
+	}
 	
 	hAdminMenu = topmenu;
 	AttachAdminMenu();
@@ -559,88 +626,134 @@ AttachAdminMenu()
 {
 	new TopMenuObject:menu_category = AddToTopMenu(hAdminMenu, "movecommands", TopMenuObject_Category, Handle_Category, INVALID_TOPMENUOBJECT, "movecommands", ADMFLAG_GENERIC);
 	if( menu_category == INVALID_TOPMENUOBJECT )
+	{
 		return;
+	}
 	
 	if(GetConVarInt(hEnableSwap))
+	{
 		AddToTopMenu(hAdminMenu, "sm_swap", TopMenuObject_Item, AdminMenu_SwapPlayer, menu_category, "sm_swap", ADMFLAG_GENERIC);
+	}
 	if(GetConVarInt(hEnableSwapCT))
+	{
 		AddToTopMenu(hAdminMenu, "sm_swapct", TopMenuObject_Item, AdminMenu_SwapCTPlayer, menu_category, "sm_swapct", ADMFLAG_GENERIC);
+	}
 	if(GetConVarInt(hEnableSwapT))
+	{
 		AddToTopMenu(hAdminMenu, "sm_swapt", TopMenuObject_Item, AdminMenu_SwapTPlayer, menu_category, "sm_swapt", ADMFLAG_GENERIC);
+	}
 	if(GetConVarInt(hEnableFSwap))
+	{
 		AddToTopMenu(hAdminMenu, "sm_fswap", TopMenuObject_Item, AdminMenu_FSwapPlayer, menu_category, "sm_fswap", ADMFLAG_GENERIC);
+	}
 	if(GetConVarInt(hEnableSwapRoundEnd))
+	{
 		AddToTopMenu(hAdminMenu, "sm_swaproundend", TopMenuObject_Item, AdminMenu_SwapRoundEndPlayer, menu_category, "sm_swaproundend", ADMFLAG_GENERIC);
+	}
 	if(GetConVarInt(hEnableSwapDeath))
+	{
 		AddToTopMenu(hAdminMenu, "sm_swapdeath", TopMenuObject_Item, AdminMenu_SwapDeathPlayer, menu_category, "sm_swapdeath", ADMFLAG_GENERIC);
+	}
 	if(GetConVarInt(hEnableSpec))
+	{
 		AddToTopMenu(hAdminMenu, "sm_spec", TopMenuObject_Item, AdminMenu_SpecPlayer, menu_category, "sm_spec", ADMFLAG_GENERIC);
+	}
 }
 
 public Handle_Category( Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, param, String:buffer[], maxlength )
 {
-	switch( action ){
-		case TopMenuAction_DisplayTitle:
-			Format( buffer, maxlength, "%T", "AdminMenuTitle", param);
-		case TopMenuAction_DisplayOption:
-			Format( buffer, maxlength, "%T", "AdminMenuTitle", param);
+	if(action == TopMenuAction_DisplayTitle)
+	{
+		Format( buffer, maxlength, "%T", "AdminMenuTitle", param);
+	}
+	else if(action == TopMenuAction_DisplayOption)
+	{
+		Format( buffer, maxlength, "%T", "AdminMenuTitle", param);
 	}
 }
 
 public AdminMenu_SwapPlayer(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, param, String:buffer[], maxlength)
 {
 	if (action == TopMenuAction_DisplayOption)
+	{
 		Format(buffer, maxlength, "%T", "AdminMenuTitleSwap", param);
+	}
 	else if (action == TopMenuAction_SelectOption)
+	{
 		SwapDisplayInfoMenu(param);
+	}
 }
 
 public AdminMenu_SwapCTPlayer(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, param, String:buffer[], maxlength)
 {
 	if (action == TopMenuAction_DisplayOption)
+	{
 		Format(buffer, maxlength, "%T", "AdminMenuTitleSwapCT", param);
+	}
 	else if (action == TopMenuAction_SelectOption)
+	{
 		SwapCTDisplayInfoMenu(param);
+	}
 }
 
 public AdminMenu_SwapTPlayer(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, param, String:buffer[], maxlength)
 {
 	if (action == TopMenuAction_DisplayOption)
+	{
 		Format(buffer, maxlength, "%T", "AdminMenuTitleSwapT", param);
+	}
 	else if (action == TopMenuAction_SelectOption)
+	{
 		SwapTDisplayInfoMenu(param);
+	}
 }
 
 public AdminMenu_FSwapPlayer(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, param, String:buffer[], maxlength)
 {
 	if (action == TopMenuAction_DisplayOption)
+	{
 		Format(buffer, maxlength, "%T", "AdminMenuTitleFSwap", param);
+	}
 	else if (action == TopMenuAction_SelectOption)
+	{
 		FSwapDisplayInfoMenu(param);
+	}
 }
 
 public AdminMenu_SwapRoundEndPlayer(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, param, String:buffer[], maxlength)
 {
 	if (action == TopMenuAction_DisplayOption)
+	{
 		Format(buffer, maxlength, "%T", "AdminMenuTitleSwapRE", param);
+	}
 	else if (action == TopMenuAction_SelectOption)
+	{
 		SwapRoundEndDisplayInfoMenu(param);
+	}
 }
 
 public AdminMenu_SwapDeathPlayer(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, param, String:buffer[], maxlength)
 {
 	if (action == TopMenuAction_DisplayOption)
+	{
 		Format(buffer, maxlength, "%T", "AdminMenuTitleSwapPD", param);
+	}
 	else if (action == TopMenuAction_SelectOption)
+	{
 		SwapPlayerDeathDisplayInfoMenu(param);
+	}
 }
 
 public AdminMenu_SpecPlayer(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, param, String:buffer[], maxlength)
 {
 	if (action == TopMenuAction_DisplayOption)
+	{
 		Format(buffer, maxlength, "%T", "AdminMenuTitleSpec", param);
+	}
 	else if (action == TopMenuAction_SelectOption)
+	{
 		SpecDisplayInfoMenu(param);
+	}
 }
 
 SwapDisplayInfoMenu(client)
@@ -1076,19 +1189,21 @@ public MenuHandler_SpecPlayer(Handle:menu, MenuAction:action, param1, param2)
 SwitchPlayerOtherTeam(client, target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
+	{
 		return;
+	}
 	
 	if(GetClientTeam(target) == CS_TEAM_CT)
 	{
 		SwapPlayerDeath[target] = false;
 		SwapRoundEnd[target] = false;
 		
-		if(GetConVarInt(hBombDrop))
-			if(GetPlayerWeaponSlot(target, CS_SLOT_C4) != -1)
-				CS_DropWeapon(target, GetPlayerWeaponSlot(target, CS_SLOT_C4), true, true);
+		DropBomb(target);
 		
 		if(GetConVarInt(hEnableResetScore))
+		{
 			ResetScore(target);
+		}
 		
 		
 		// Thanks Peace-Maker
@@ -1097,7 +1212,9 @@ SwitchPlayerOtherTeam(client, target)
 			SetEntProp(target, Prop_Send, "m_bHasDefuser", 0);
 			CS_SwitchTeam(target, CS_TEAM_T);
 			if(GetConVarInt(hDefuserDrop))
+			{
 				GivePlayerItem(target, "item_defuser");
+			}
 			ForcePlayerSuicide(target);
 			LogAction(client, target, "\"%L\" was moved to T by \"%L\"", target, client);
 		}
@@ -1114,12 +1231,12 @@ SwitchPlayerOtherTeam(client, target)
 		SwapPlayerDeath[target] = false;
 		SwapRoundEnd[target] = false;
 		
-		if(GetConVarInt(hBombDrop))
-			if(GetPlayerWeaponSlot(target, CS_SLOT_C4) != -1)
-				CS_DropWeapon(target, GetPlayerWeaponSlot(target, CS_SLOT_C4), true, true);
+		DropBomb(target);
 		
 		if(GetConVarInt(hEnableResetScore))
+		{
 			ResetScore(target);
+		}
 		
 		ChangeClientTeam(target, CS_TEAM_CT);
 		LogAction(client, target, "\"%L\" was moved to CT by \"%L\"", target, client);
@@ -1132,19 +1249,21 @@ SwitchPlayerOtherTeam(client, target)
 SwitchPlayerCTTeam(client, target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
+	{
 		return;
+	}
 	
 	if(GetClientTeam(target) != CS_TEAM_CT)
 	{
 		SwapPlayerDeath[target] = false;
 		SwapRoundEnd[target] = false;
 		
-		if(GetConVarInt(hBombDrop))
-			if(GetPlayerWeaponSlot(target, CS_SLOT_C4) != -1)
-				CS_DropWeapon(target, GetPlayerWeaponSlot(target, CS_SLOT_C4), true, true);
+		DropBomb(target);
 		
 		if(GetConVarInt(hEnableResetScore))
+		{
 			ResetScore(target);
+		}
 		
 		
 		// Thanks Peace-Maker
@@ -1153,14 +1272,20 @@ SwitchPlayerCTTeam(client, target)
 			SetEntProp(target, Prop_Send, "m_bHasDefuser", 0);
 			CS_SwitchTeam(target, CS_TEAM_CT);
 			if(GetConVarInt(hDefuserDrop))
+			{
 				GivePlayerItem(target, "item_defuser");
+			}
 		}
 		else if(GetEntProp(target, Prop_Send, "m_bHasDefuser") == 0)
+		{
 			CS_SwitchTeam(target, CS_TEAM_CT);
+		}
 		CS_UpdateClientModel(target);
 		LogAction(client, target, "\"%L\" was moved to CT by \"%L\"", target, client);
 		CPrintToChatAll("%t", "MovedCT", sMoveTag, client, target);
-	} else {
+	}
+	else
+	{
 		CPrintToChat(client, "%t", "PlayerInvalid", sMoveTag);
 	}
 	
@@ -1170,19 +1295,21 @@ SwitchPlayerCTTeam(client, target)
 SwitchPlayerTTeam(client, target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
+	{
 		return;
+	}
 	
 	if(GetClientTeam(target) != CS_TEAM_T)
 	{
 		SwapPlayerDeath[target] = false;
 		SwapRoundEnd[target] = false;
 		
-		if(GetConVarInt(hBombDrop))
-			if(GetPlayerWeaponSlot(target, CS_SLOT_C4) != -1)
-				CS_DropWeapon(target, GetPlayerWeaponSlot(target, CS_SLOT_C4), true, true);
+		DropBomb(target);
 		
 		if(GetConVarInt(hEnableResetScore))
+		{
 			ResetScore(target);
+		}
 		
 		
 		// Thanks Peace-Maker
@@ -1191,14 +1318,20 @@ SwitchPlayerTTeam(client, target)
 			SetEntProp(target, Prop_Send, "m_bHasDefuser", 0);
 			CS_SwitchTeam(target, CS_TEAM_T);
 			if(GetConVarInt(hDefuserDrop))
+			{
 				GivePlayerItem(target, "item_defuser");
+			}
 		}
 		else if(GetEntProp(target, Prop_Send, "m_bHasDefuser") == 0)
+		{
 			CS_SwitchTeam(target, CS_TEAM_T);
+		}
 		LogAction(client, target, "\"%L\" was moved to T by \"%L\"", target, client);
 		CS_UpdateClientModel(target);
 		CPrintToChatAll("%t", "MovedT", sMoveTag, client, target);
-	} else {
+	}
+	else
+	{
 		CPrintToChat(client, "%t", "PlayerInvalid", sMoveTag);
 	}
 	
@@ -1213,8 +1346,11 @@ SwitchRoundEndPlayerOtherTeam(client, target)
 	if(GetClientTeam(target) == CS_TEAM_CT)
 	{
 		if(!IsPlayerAlive(target))
+		{
 			SwitchPlayerOtherTeam(client, target);
-		else {
+		}
+		else
+		{
 			SwapRoundEnd[target] = true;
 			LogAction(client, target, "\"%L\" was moved to T by \"%L\" on Round End", target, client);
 			CPrintToChatAll("%t", "MovedTRE", sMoveTag, target, client);
@@ -1223,8 +1359,11 @@ SwitchRoundEndPlayerOtherTeam(client, target)
 	else if(GetClientTeam(target) == CS_TEAM_T)
 	{
 		if(!IsPlayerAlive(target))
+		{
 			SwitchPlayerOtherTeam(client, target);
-		else {
+		}
+		else
+		{
 			SwapRoundEnd[target] = true;
 			LogAction(client, target, "\"%L\" was moved to CT by \"%L\" on Round End", target, client);
 			CPrintToChatAll("%t", "MovedCTRE", sMoveTag, target, client);
@@ -1237,13 +1376,18 @@ SwitchRoundEndPlayerOtherTeam(client, target)
 SwitchPlayerDeathPlayerOtherTeam(client, target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
+	{
 		return;
+	}
 	
 	if(GetClientTeam(target) == CS_TEAM_CT)
 	{
 		if(!IsPlayerAlive(target))
+		{
 			SwitchPlayerOtherTeam(client, target);
-		else {
+		}
+		else
+		{
 			SwapPlayerDeath[target] = true;
 			LogAction(client, target, "\"%L\" was moved to T by \"%L\" on Player Death", target, client);
 			CPrintToChatAll("%t", "MovedTPD", sMoveTag, target, client, target);
@@ -1252,8 +1396,11 @@ SwitchPlayerDeathPlayerOtherTeam(client, target)
 	else if(GetClientTeam(target) == CS_TEAM_T)
 	{
 		if(!IsPlayerAlive(target))
+		{
 			SwitchPlayerOtherTeam(client, target);
-		else {
+		}
+		else
+		{
 			SwapPlayerDeath[target] = true;
 			LogAction(client, target, "\"%L\" was moved to CT by \"%L\" on Player Death", target, client);
 			CPrintToChatAll("%t", "MovedCTPD", sMoveTag, target, client, target);
@@ -1266,19 +1413,21 @@ SwitchPlayerDeathPlayerOtherTeam(client, target)
 FSwitchPlayerOtherTeam(client, target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
+	{
 		return;
+	}
 	
 	if(GetClientTeam(target) == CS_TEAM_CT)
 	{
 		SwapPlayerDeath[target] = false;
 		SwapRoundEnd[target] = false;
 		
-		if(GetConVarInt(hBombDrop))
-			if(GetPlayerWeaponSlot(target, CS_SLOT_C4) != -1)
-				CS_DropWeapon(target, GetPlayerWeaponSlot(target, CS_SLOT_C4), true, true);
+		DropBomb(target);
 		
 		if(GetConVarInt(hEnableResetScore))
+		{
 			ResetScore(target);
+		}
 		
 		// Thanks Peace-Maker
 		if(GetEntProp(target, Prop_Send, "m_bHasDefuser") == 1)
@@ -1286,9 +1435,14 @@ FSwitchPlayerOtherTeam(client, target)
 			SetEntProp(target, Prop_Send, "m_bHasDefuser", 0);
 			CS_SwitchTeam(target, CS_TEAM_T);
 			if(GetConVarInt(hDefuserDrop))
+			{
 				GivePlayerItem(target, "item_defuser");
-		} else if(GetEntProp(target, Prop_Send, "m_bHasDefuser") == 0)
+			}
+		}
+		else if(GetEntProp(target, Prop_Send, "m_bHasDefuser") == 0)
+		{
 			CS_SwitchTeam(target, CS_TEAM_T);
+		}
 		CS_UpdateClientModel(target);
 		LogAction(client, target, "\"%L\" was moved to T by \"%L\"", target, client);
 		CPrintToChatAll("%t", "MovedT", sMoveTag, client, target);
@@ -1298,12 +1452,12 @@ FSwitchPlayerOtherTeam(client, target)
 		SwapPlayerDeath[target] = false;
 		SwapRoundEnd[target] = false;
 		
-		if(GetConVarInt(hBombDrop))
-			if(GetPlayerWeaponSlot(target, CS_SLOT_C4) != -1)
-				CS_DropWeapon(target, GetPlayerWeaponSlot(target, CS_SLOT_C4), true, true);
+		DropBomb(target);
 		
 		if(GetConVarInt(hEnableResetScore))
+		{
 			ResetScore(target);
+		}
 		
 		CS_SwitchTeam(target, CS_TEAM_CT);
 		LogAction(client, target, "\"%L\" was moved to CT by \"%L\"", target, client);
@@ -1318,7 +1472,9 @@ FSwitchPlayerOtherTeam(client, target)
 SwitchPlayerSpecTeam(client, target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
+	{
 		return;
+	}
 	
 	if (GetClientTeam(target) != CS_TEAM_SPECTATOR)
 	{
@@ -1326,7 +1482,9 @@ SwitchPlayerSpecTeam(client, target)
 		SwapRoundEnd[target] = false;
 		
 		if(GetConVarInt(hEnableResetScore))
+		{
 			ResetScore(target);
+		}
 		
 		ChangeClientTeam(target, CS_TEAM_SPECTATOR);
 		LogAction(client, target, "\"%L\" was moved to Spec by \"%L\"", target, client);
@@ -1361,29 +1519,43 @@ AddPlayerList(Handle:hMenu)
 		if(IsClientValid(i))
 		{
 			if(GetClientTeam(i) < 2)
+			{
 				continue;
+			}
 			
 			if(SwapRoundEnd[i])
+			{
 				Format(SwapTyp, sizeof(SwapTyp), "%t", "AdminMenuMoveTypeRE");
+			}
 			
 			if(SwapPlayerDeath[i])
+			{
 				Format(SwapTyp, sizeof(SwapTyp), "%t", "AdminMenuMoveTypePD");
+			}
 			
 			if(GetClientTeam(i) == CS_TEAM_CT)
+			{
 				Format(TeamName, sizeof(TeamName), "%t", "AdminMenuTeamCTName");
+			}
 			
 			if(GetClientTeam(i) == CS_TEAM_T)
+			{
 				Format(TeamName, sizeof(TeamName), "%t", "AdminMenuTeamTName");
+			}
 			
 			GetClientName(i, name, 31);
 			id = GetClientUserId(i);
 			IntToString(id, target, sizeof(target));
 			
 			if(SwapRoundEnd[i] || SwapPlayerDeath[i])
+			{
 				Format(listname, sizeof(listname),"[%s] %s (%s) [%s]", SwapTyp, name, target, TeamName);
+			}
 			
 			if(!SwapRoundEnd[i] && !SwapPlayerDeath[i])
+			{
 				Format(listname, sizeof(listname),"%s (%s) [%s]", name, target, TeamName);
+			}
 			
 			AddMenuItem(hMenu, target, listname);
 		}
@@ -1404,32 +1576,48 @@ AddPlayerListCT(Handle:hMenu)
 		if(IsClientValid(i))
 		{
 			if(GetClientTeam(i) != CS_TEAM_T)
+			{
 				continue;
+			}
 			
 			if(SwapRoundEnd[i])
+			{
 				Format(SwapTyp, sizeof(SwapTyp), "%t", "AdminMenuMoveTypeRE");
+			}
 			
 			if(SwapPlayerDeath[i])
+			{
 				Format(SwapTyp, sizeof(SwapTyp), "%t", "AdminMenuMoveTypePD");
+			}
 			
 			if(GetClientTeam(i) == CS_TEAM_CT)
+			{
 				Format(TeamName, sizeof(TeamName), "%t", "AdminMenuTeamCTName");
+			}
 			
 			if(GetClientTeam(i) == CS_TEAM_T)
+			{
 				Format(TeamName, sizeof(TeamName), "%t", "AdminMenuTeamTName");
+			}
 			
 			if(GetClientTeam(i) == CS_TEAM_SPECTATOR)
+			{
 				Format(TeamName, sizeof(TeamName), "%t", "AdminMenuTeamSpecName");
+			}
 			
 			GetClientName(i, name, 31);
 			id = GetClientUserId(i);
 			IntToString(id, target, sizeof(target));
 			
 			if(SwapRoundEnd[i] || SwapPlayerDeath[i])
+			{
 				Format(listname, sizeof(listname),"[%s] %s (%s) [%s]", SwapTyp, name, target, TeamName);
+			}
 			
 			if(!SwapRoundEnd[i] && !SwapPlayerDeath[i])
+			{
 				Format(listname, sizeof(listname),"%s (%s) [%s]", name, target, TeamName);
+			}
 			
 			AddMenuItem(hMenu, target, listname);
 		}
@@ -1450,32 +1638,48 @@ AddPlayerListT(Handle:hMenu)
 		if(IsClientValid(i))
 		{
 			if(GetClientTeam(i) != CS_TEAM_CT)
+			{
 				continue;
+			}
 			
 			if(SwapRoundEnd[i])
+			{
 				Format(SwapTyp, sizeof(SwapTyp), "%t", "AdminMenuMoveTypeRE");
+			}
 			
 			if(SwapPlayerDeath[i])
+			{
 				Format(SwapTyp, sizeof(SwapTyp), "%t", "AdminMenuMoveTypePD");
+			}
 			
 			if(GetClientTeam(i) == CS_TEAM_CT)
+			{
 				Format(TeamName, sizeof(TeamName), "%t", "AdminMenuTeamCTName");
+			}
 			
 			if(GetClientTeam(i) == CS_TEAM_T)
+			{
 				Format(TeamName, sizeof(TeamName), "%t", "AdminMenuTeamTName");
+			}
 			
 			if(GetClientTeam(i) == CS_TEAM_SPECTATOR)
+			{
 				Format(TeamName, sizeof(TeamName), "%t", "AdminMenuTeamSpecName");
+			}
 			
 			GetClientName(i, name, 31);
 			id = GetClientUserId(i);
 			IntToString(id, target, sizeof(target));
 			
 			if(SwapRoundEnd[i] || SwapPlayerDeath[i])
+			{
 				Format(listname, sizeof(listname),"[%s] %s (%s) [%s]", SwapTyp, name, target, TeamName);
+			}
 			
 			if(!SwapRoundEnd[i] && !SwapPlayerDeath[i])
+			{
 				Format(listname, sizeof(listname),"%s (%s) [%s]", name, target, TeamName);
+			}
 			
 			AddMenuItem(hMenu, target, listname);
 		}
@@ -1484,7 +1688,7 @@ AddPlayerListT(Handle:hMenu)
 
 ResetScore(client)
 {
-	if(StrEqual(sGameType, "cstrike", false))
+	if(GetEngineVersion() == Engine_CSS)
 	{
 		if(GetClientFrags(client) == 0 && GetClientDeaths(client) == 0)
 		{
@@ -1498,7 +1702,7 @@ ResetScore(client)
 
 		}
 	}
-	else if(StrEqual(sGameType, "csgo", false))
+	else if(GetEngineVersion() == Engine_CSGO)
 	{
 		if(GetClientFrags(client) == 0 && GetClientDeaths(client) == 0 && CS_GetClientAssists(client) == 0)
 		{
@@ -1538,16 +1742,13 @@ CheckBalance()
 
 ChangeTeamCount(team, diff)
 {
-	switch(team)
+	if(team == CS_TEAM_T)
 	{
-		case CS_TEAM_T:
-		{
-			TCount += diff;
-		}
-		case CS_TEAM_CT:
-		{
-			CTCount += diff;
-		}
+		TCount += diff;
+	}
+	else if(team == CS_TEAM_CT)
+	{
+		CTCount += diff;
 	}
 }
 
@@ -1572,6 +1773,19 @@ public bool:IsClientAdmin(client, Handle:hFlag)
 public bool:IsClientValid(client)
 {
 	if(client > 0 && client <= MaxClients && IsClientInGame(client))
+	{
 		return true;
+	}
 	return false;
+}
+
+DropBomb(client)
+{
+	if(GetConVarInt(hBombDrop))
+	{
+		if(GetPlayerWeaponSlot(client, CS_SLOT_C4) != -1)
+		{
+			CS_DropWeapon(client, GetPlayerWeaponSlot(client, CS_SLOT_C4), true, true);
+		}
+	}
 }
