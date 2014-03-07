@@ -7,7 +7,7 @@
 		"de"		"{lightgreen}[Move]"
 		"dk"		"{lightgreen}[Move]"
 		"fr"		"{lightgreen}[Move]"
-		"chi"   "{lightgreen}[Move]"
+		"chi"		"{lightgreen}[Move]"
 	}
 	
 	"MovedCTwithoutAdmin"
@@ -34,7 +34,7 @@
 	{
 		"#format"	"{1:s},{2:N}"
 		"en"		"{1} {lightgreen}{2} {green}is now AFK!"
-    "chi"		"{1} {lightgreen}{2} {green}现在是AFK状态！"
+		"chi"		"{1} {lightgreen}{2} {green}现在是AFK状态！"
 		"de"		"{1} {lightgreen}{2} {green}ist jetzt AFK!"
 		"dk"		"{1} {lightgreen}{2} {green}er AFK!"
 		"fr"		"{1} {lightgreen}{2} {green}est maintenant AFK!"

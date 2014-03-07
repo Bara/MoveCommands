@@ -25,7 +25,7 @@
 #include <cstrike>
 #define REQUIRE_EXTENSIONS
 
-#define PLUGIN_VERSION "1.2.54"
+#define PLUGIN_VERSION "1.2.95"
 
 #define UPDATE_URL    "http://update.bara.in/movecommands.txt"
 
@@ -295,17 +295,17 @@ public Action:Command_AFK(client, args)
 {
 	if(!GetConVarInt(hEnableAFK))
 	{
-		return Plugin_Handled;
+		return;
 	}
 	
 	if(SwapRoundEnd[client])
 	{
-		return Plugin_Handled;
+		return;
 	}
 	
 	if(SwapPlayerDeath[client])
 	{
-		return Plugin_Handled;
+		return;
 	}
 	
 	if(GetClientTeam(client) != CS_TEAM_SPECTATOR)
@@ -313,15 +313,13 @@ public Action:Command_AFK(client, args)
 		ChangeClientTeam(client, CS_TEAM_SPECTATOR);
 		CPrintToChatAll("%t", "AFK", sMoveTag, client);
 	}
-
-	return Plugin_Handled;
 }
 
 public Action:Command_ResetScore(client, args)
 {
 	if(!GetConVarInt(hEnableResetScoreCommand))
 	{
-		return Plugin_Handled;
+		return;
 	}
 
 	if(GetClientTeam(client) == CS_TEAM_T || GetClientTeam(client) == CS_TEAM_CT)
@@ -332,21 +330,19 @@ public Action:Command_ResetScore(client, args)
 	{
 		CPrintToChat(client, "%t", "WrongTeam", sMoveTag);
 	}
-	
-	return Plugin_Handled;
 }
 
 public Action:Command_Spec(client, args)
 {
 	if(!GetConVarInt(hEnableSpec))
 	{
-		return Plugin_Handled;
+		return;
 	}
 	
 	if (args < 1)
 	{
 		ReplyToCommand(client, "sm_spec <#UserID|Name>");
-		return Plugin_Handled;
+		return;
 	}
 	
 	decl String:arg1[65];
@@ -355,7 +351,7 @@ public Action:Command_Spec(client, args)
 	new target = FindTarget(client, arg1);
 	if (target == -1)
 	{
-		return Plugin_Handled;
+		return;
 	}
 	
 	if(SwapRoundEnd[target])
@@ -373,20 +369,19 @@ public Action:Command_Spec(client, args)
 	}
 
 	SwitchPlayerSpecTeam(client, target);
-	return Plugin_Handled;	
 }
 
 public Action:Command_Swap(client, args)
 {
 	if(!GetConVarInt(hEnableSwap))
 	{
-		return Plugin_Handled;
+		return;
 	}
 	
 	if (args < 1)
 	{
 		ReplyToCommand(client, "sm_swap <#UserID|Name>");
-		return Plugin_Handled;
+		return;
 	}
 	
 	decl String:arg1[65];
@@ -395,7 +390,12 @@ public Action:Command_Swap(client, args)
 	new target = FindTarget(client, arg1);
 	if (target == -1)
 	{
-		return Plugin_Handled;
+		return;
+	}
+
+	if(GetClientTeam(target) < 2)
+	{
+		return;
 	}
 	
 	if(SwapRoundEnd[target])
@@ -413,20 +413,19 @@ public Action:Command_Swap(client, args)
 	}
 	
 	SwitchPlayerOtherTeam(client, target);
-	return Plugin_Handled;	
 }
 
 public Action:Command_SwapCT(client, args)
 {
 	if(!GetConVarInt(hEnableSwapCT))
 	{
-		return Plugin_Handled;
+		return;
 	}
 	
 	if (args < 1)
 	{
 		ReplyToCommand(client, "sm_swapct <#UserID|Name>");
-		return Plugin_Handled;
+		return;
 	}
 	
 	decl String:arg1[65];
@@ -435,7 +434,12 @@ public Action:Command_SwapCT(client, args)
 	new target = FindTarget(client, arg1);
 	if (target == -1)
 	{
-		return Plugin_Handled;
+		return;
+	}
+
+	if(GetClientTeam(target) < 2)
+	{
+		return;
 	}
 	
 	if(SwapRoundEnd[target])
@@ -453,20 +457,19 @@ public Action:Command_SwapCT(client, args)
 	}
 	
 	SwitchPlayerCTTeam(client, target);
-	return Plugin_Handled;	
 }
 
 public Action:Command_SwapT(client, args)
 {
 	if(!GetConVarInt(hEnableSwapT))
 	{
-		return Plugin_Handled;
+		return;
 	}
 	
 	if (args < 1)
 	{
 		ReplyToCommand(client, "sm_swapt <#UserID|Name>");
-		return Plugin_Handled;
+		return;
 	}
 	
 	decl String:arg1[65];
@@ -475,7 +478,12 @@ public Action:Command_SwapT(client, args)
 	new target = FindTarget(client, arg1);
 	if (target == -1)
 	{
-		return Plugin_Handled;
+		return;
+	}
+
+	if(GetClientTeam(target) < 2)
+	{
+		return;
 	}
 	
 	if(SwapRoundEnd[target])
@@ -493,20 +501,19 @@ public Action:Command_SwapT(client, args)
 	}
 	
 	SwitchPlayerTTeam(client, target);
-	return Plugin_Handled;	
 }
 
 public Action:Command_SwapRoundEnd(client, args)
 {
 	if(!GetConVarInt(hEnableSwapRoundEnd))
 	{
-		return Plugin_Handled;
+		return;
 	}
 	
 	if (args < 1)
 	{
 		ReplyToCommand(client, "sm_swaproundend <#UserID|Name>");
-		return Plugin_Handled;
+		return;
 	}
 	
 	decl String:arg1[65];
@@ -515,36 +522,40 @@ public Action:Command_SwapRoundEnd(client, args)
 	new target = FindTarget(client, arg1);
 	if (target == -1)
 	{
-		return Plugin_Handled;
+		return;
+	}
+
+	if(GetClientTeam(target) < 2)
+	{
+		return;
 	}
 	
 	if(SwapRoundEnd[target])
 	{
 		CPrintToChat(client, "%t", "SwapRoundEndAlready", sMoveTag, target);
-		return Plugin_Handled;
+		return;
 	}
 	
 	if(SwapPlayerDeath[target])
 	{
 		CPrintToChat(client, "%t", "SwapPlayerDeathAlready", sMoveTag, target);
-		return Plugin_Handled;
+		return;
 	}
 
 	SwitchRoundEndPlayerOtherTeam(client, target);
-	return Plugin_Handled;	
 }
 
 public Action:Command_SwapPlayerDeath(client, args)
 {
 	if(!GetConVarInt(hEnableSwapDeath))
 	{
-		return Plugin_Handled;
+		return;
 	}
 	
 	if (args < 1)
 	{
 		ReplyToCommand(client, "sm_swapdeath <#UserID|Name>");
-		return Plugin_Handled;
+		return;
 	}
 	
 	decl String:arg1[65];
@@ -553,36 +564,40 @@ public Action:Command_SwapPlayerDeath(client, args)
 	new target = FindTarget(client, arg1);
 	if (target == -1)
 	{
-		return Plugin_Handled;
+		return;
+	}
+
+	if(GetClientTeam(target) < 2)
+	{
+		return;
 	}
 	
 	if(SwapRoundEnd[target])
 	{
 		CPrintToChat(client, "%t", "SwapRoundEndAlready", sMoveTag, target);
-		return Plugin_Handled;
+		return;
 	}
 	
 	if(SwapPlayerDeath[target])
 	{
 		CPrintToChat(client, "%t", "SwapPlayerDeathAlready", sMoveTag, target);
-		return Plugin_Handled;
+		return;
 	}
 
 	SwitchPlayerDeathPlayerOtherTeam(client, target);
-	return Plugin_Handled;	
 }
 
 public Action:Command_FSwap(client, args)
 {
 	if(!GetConVarInt(hEnableFSwap))
 	{
-		return Plugin_Handled;
+		return;
 	}
 	
 	if (args < 1)
 	{
 		ReplyToCommand(client, "sm_fswap <#UserID|Name>");
-		return Plugin_Handled;
+		return;
 	}
 	
 	decl String:arg1[65];
@@ -591,11 +606,15 @@ public Action:Command_FSwap(client, args)
 	new target = FindTarget(client, arg1);
 	if (target == -1)
 	{
-		return Plugin_Handled;
+		return;
+	}
+
+	if(GetClientTeam(target) < 2)
+	{
+		return;
 	}
 
 	FSwitchPlayerOtherTeam(client, target);
-	return Plugin_Handled;	
 }
 
 public OnLibraryRemoved(const String:name[])
@@ -613,7 +632,7 @@ public OnAdminMenuReady(Handle:topmenu)
 		return;
 	}
 	
-	if (topmenu == hAdminMenu)
+	if(topmenu == hAdminMenu)
 	{
 		return;
 	}
@@ -1211,10 +1230,12 @@ SwitchPlayerOtherTeam(client, target)
 		{
 			SetEntProp(target, Prop_Send, "m_bHasDefuser", 0);
 			CS_SwitchTeam(target, CS_TEAM_T);
+
 			if(GetConVarInt(hDefuserDrop))
 			{
 				GivePlayerItem(target, "item_defuser");
 			}
+
 			ForcePlayerSuicide(target);
 			LogAction(client, target, "\"%L\" was moved to T by \"%L\"", target, client);
 		}
@@ -1242,8 +1263,6 @@ SwitchPlayerOtherTeam(client, target)
 		LogAction(client, target, "\"%L\" was moved to CT by \"%L\"", target, client);
 		CPrintToChatAll("%t", "MovedCT", sMoveTag, client, target);
 	}
-	
-	return;
 }
 
 SwitchPlayerCTTeam(client, target)
@@ -1288,8 +1307,6 @@ SwitchPlayerCTTeam(client, target)
 	{
 		CPrintToChat(client, "%t", "PlayerInvalid", sMoveTag);
 	}
-	
-	return;
 }
 
 SwitchPlayerTTeam(client, target)
@@ -1310,8 +1327,7 @@ SwitchPlayerTTeam(client, target)
 		{
 			ResetScore(target);
 		}
-		
-		
+				
 		// Thanks Peace-Maker
 		if(GetEntProp(target, Prop_Send, "m_bHasDefuser") == 1)
 		{
@@ -1334,8 +1350,6 @@ SwitchPlayerTTeam(client, target)
 	{
 		CPrintToChat(client, "%t", "PlayerInvalid", sMoveTag);
 	}
-	
-	return;
 }
 
 SwitchRoundEndPlayerOtherTeam(client, target)
@@ -1369,8 +1383,6 @@ SwitchRoundEndPlayerOtherTeam(client, target)
 			CPrintToChatAll("%t", "MovedCTRE", sMoveTag, target, client);
 		}
 	}
-	
-	return;
 }
 
 SwitchPlayerDeathPlayerOtherTeam(client, target)
@@ -1406,8 +1418,6 @@ SwitchPlayerDeathPlayerOtherTeam(client, target)
 			CPrintToChatAll("%t", "MovedCTPD", sMoveTag, target, client, target);
 		}
 	}
-	
-	return;
 }
 
 FSwitchPlayerOtherTeam(client, target)
@@ -1465,8 +1475,6 @@ FSwitchPlayerOtherTeam(client, target)
 		
 		CPrintToChatAll("%t", "MovedCT", sMoveTag, client, target);
 	}
-	
-	return;
 }
 
 SwitchPlayerSpecTeam(client, target)
@@ -1490,7 +1498,6 @@ SwitchPlayerSpecTeam(client, target)
 		LogAction(client, target, "\"%L\" was moved to Spec by \"%L\"", target, client);
 		CPrintToChatAll("%t", "MovedSpec", sMoveTag, client, target);
 	}
-	return;
 }
 
 CheckClients(client, target)
@@ -1686,7 +1693,7 @@ AddPlayerListT(Handle:hMenu)
 	}
 }
 
-ResetScore(client)
+stock ResetScore(client)
 {
 	if(GetEngineVersion() == Engine_CSS)
 	{
@@ -1718,7 +1725,7 @@ ResetScore(client)
 	}
 }
 
-NoPlayer(param1)
+stock NoPlayer(param1)
 {
 	DisplayTopMenu(hAdminMenu, param1, TopMenuPosition_LastCategory);
 	CPrintToChat(param1, "%t", "AdminMenuNoPlayer", sMoveTag);
@@ -1733,14 +1740,14 @@ public Action:Timer_ChangeClientTeam(Handle:timer, any:pack)
 	ChangeClientTeam(client, team);
 }
 
-CheckBalance()
+stock CheckBalance()
 {
 	new diff = TCount - CTCount;
 	if ( diff < 0 ) diff = -diff;
 	Balance = diff <= 1;
 }
 
-ChangeTeamCount(team, diff)
+stock ChangeTeamCount(team, diff)
 {
 	if(team == CS_TEAM_T)
 	{
@@ -1752,25 +1759,7 @@ ChangeTeamCount(team, diff)
 	}
 }
 
-public bool:IsClientAdmin(client, Handle:hFlag)
-{
-	if (IsClientValid(client))
-	{
-		new AdminId:adminid = GetUserAdmin(client);
-		new AdminFlag:flag;
-		decl String:sAdminFlag[3];
-		GetConVarString(hFlag, sAdminFlag, sizeof(sAdminFlag));
-		FindFlagByChar(sAdminFlag[0], flag);
-		if (GetAdminFlag(adminid, flag))
-		{
-			return true;
-		}
-		return false;
-	}
-	return false;
-}
-
-public bool:IsClientValid(client)
+stock bool:IsClientValid(client)
 {
 	if(client > 0 && client <= MaxClients && IsClientInGame(client))
 	{
@@ -1779,7 +1768,7 @@ public bool:IsClientValid(client)
 	return false;
 }
 
-DropBomb(client)
+stock DropBomb(client)
 {
 	if(GetConVarInt(hBombDrop))
 	{
