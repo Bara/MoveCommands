@@ -18,14 +18,14 @@
 
 #undef REQUIRE_PLUGIN
 #include <adminmenu>
-#include <updater>
+// #include <updater>
 #define REQUIRE_PLUGIN
 
 #undef REQUIRE_EXTENSIONS
 #include <cstrike>
 #define REQUIRE_EXTENSIONS
 
-#define PLUGIN_VERSION "1.2.95"
+#define PLUGIN_VERSION "1.3.1"
 
 #define UPDATE_URL    "http://update.bara.in/movecommands.txt"
 
@@ -41,10 +41,13 @@ new Handle:hEnableSwapT = INVALID_HANDLE;
 new Handle:hEnableFSwap = INVALID_HANDLE;
 new Handle:hEnableSwapRoundEnd = INVALID_HANDLE;
 new Handle:hEnableSwapDeath = INVALID_HANDLE;
-new Handle:hBombDrop = INVALID_HANDLE;
-new Handle:hDefuserDrop = INVALID_HANDLE;
 new Handle:hEnableResetScore = INVALID_HANDLE;
 new Handle:hEnableTeamBalance = INVALID_HANDLE;
+new Handle:hEnableExchangeTeams = INVALID_HANDLE;
+
+new Handle:hBombDrop = INVALID_HANDLE;
+new Handle:hDefuserDrop = INVALID_HANDLE;
+
 
 new bool:SwapRoundEnd[MAXPLAYERS+1] = false;
 new bool:SwapPlayerDeath[MAXPLAYERS+1] = false;
@@ -68,12 +71,12 @@ public OnPluginStart()
 {
 	LoadTranslations("movecommands.phrases");
 	
-	if (LibraryExists("updater"))
+	/* if (LibraryExists("updater"))
 	{
 		Updater_AddPlugin(UPDATE_URL);
-	}
+	} */
 	
-	if(GetEngineVersion() != Engine_CSS || GetEngineVersion() != Engine_CSGO)
+	if(GetEngineVersion() != Engine_CSS && GetEngineVersion() != Engine_CSGO)
 	{
 		SetFailState("Unsupported Game! Only CS:S and CS:GO");
 	}
@@ -96,7 +99,8 @@ public OnPluginStart()
 	hEnableFSwap = AutoExecConfig_CreateConVar("movecommands_enable_fswap", "1", "Enable / Disable Force Swap Command",_, true, 0.0, true, 1.0);
 	hEnableSwapRoundEnd = AutoExecConfig_CreateConVar("movecommands_enable_swaproundend", "1", "Enable / Disable Swap Round End Command",_, true, 0.0, true, 1.0);
 	hEnableSwapDeath = AutoExecConfig_CreateConVar("movecommands_enable_swapdeath", "1", "Enable / Disable Swap Player Death Command",_, true, 0.0, true, 1.0);
-	
+	hEnableExchangeTeams = AutoExecConfig_CreateConVar("movecommands_enable_exchangeteams", "1", "Enable / Disable Exchange Teams Command",_, true, 0.0, true, 1.0);
+
 	// Enable/Disable Drops
 	hBombDrop = AutoExecConfig_CreateConVar("movecommands_enable_drop_bomb", "1", "Enable / Disable Bomb Drop",_, true, 0.0, true, 1.0);
 	hDefuserDrop = AutoExecConfig_CreateConVar("movecommands_enable_drop_defuser", "1", "Enable / Disable Defuser Drop",_, true, 0.0, true, 1.0);
@@ -117,6 +121,7 @@ public OnPluginStart()
 	RegAdminCmd("sm_fswap", Command_FSwap, ADMFLAG_GENERIC);
 	RegAdminCmd("sm_swaproundend", Command_SwapRoundEnd, ADMFLAG_GENERIC);
 	RegAdminCmd("sm_swapdeath", Command_SwapPlayerDeath, ADMFLAG_GENERIC);
+	RegAdminCmd("sm_exchange", Command_ExchangeTeam, ADMFLAG_GENERIC);
 
 	RegConsoleCmd("sm_afk", Command_AFK);
 
@@ -135,13 +140,13 @@ public OnPluginStart()
 	}
 }
 
-public OnLibraryAdded(const String:name[])
+/* public OnLibraryAdded(const String:name[])
 {
 	if (StrEqual(name, "updater"))
 	{
 		Updater_AddPlugin(UPDATE_URL);
 	}
-}
+} */
 
 public OnMapStart()
 {
@@ -149,6 +154,7 @@ public OnMapStart()
 	{
 		TCount = 0;
 		CTCount = 0;
+		
 		for(new i = 1; i <= MaxClients; i++)
 		{
 			if (IsClientValid(i))
@@ -156,7 +162,6 @@ public OnMapStart()
 				ChangeTeamCount(GetClientTeam(i), 1);
 			}
 		}
-
 		CheckBalance();
 	}
 }
@@ -615,6 +620,25 @@ public Action:Command_FSwap(client, args)
 	}
 
 	FSwitchPlayerOtherTeam(client, target);
+}
+
+public Action:Command_ExchangeTeam(client, args)
+{
+	if(!GetConVarInt(hEnableExchangeTeams))
+	{
+		return;
+	}
+	
+	if (args > 0)
+	{
+		ReplyToCommand(client, "sm_exchange");
+		return;
+	}
+	
+	for(new i = 1; i < MaxClients; i++)
+	{
+		ExchangeTeam(client, i);
+	}
 }
 
 public OnLibraryRemoved(const String:name[])
@@ -1205,7 +1229,7 @@ public MenuHandler_SpecPlayer(Handle:menu, MenuAction:action, param1, param2)
 	}
 }
 
-SwitchPlayerOtherTeam(client, target)
+stock SwitchPlayerOtherTeam(client, target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
 	{
@@ -1265,7 +1289,7 @@ SwitchPlayerOtherTeam(client, target)
 	}
 }
 
-SwitchPlayerCTTeam(client, target)
+stock SwitchPlayerCTTeam(client, target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
 	{
@@ -1309,7 +1333,7 @@ SwitchPlayerCTTeam(client, target)
 	}
 }
 
-SwitchPlayerTTeam(client, target)
+stock SwitchPlayerTTeam(client, target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
 	{
@@ -1352,7 +1376,7 @@ SwitchPlayerTTeam(client, target)
 	}
 }
 
-SwitchRoundEndPlayerOtherTeam(client, target)
+stock SwitchRoundEndPlayerOtherTeam(client, target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
 		return;
@@ -1385,7 +1409,7 @@ SwitchRoundEndPlayerOtherTeam(client, target)
 	}
 }
 
-SwitchPlayerDeathPlayerOtherTeam(client, target)
+stock SwitchPlayerDeathPlayerOtherTeam(client, target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
 	{
@@ -1420,7 +1444,7 @@ SwitchPlayerDeathPlayerOtherTeam(client, target)
 	}
 }
 
-FSwitchPlayerOtherTeam(client, target)
+stock FSwitchPlayerOtherTeam(client, target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
 	{
@@ -1477,7 +1501,62 @@ FSwitchPlayerOtherTeam(client, target)
 	}
 }
 
-SwitchPlayerSpecTeam(client, target)
+stock ExchangeTeam(client, target)
+{
+	if(!IsClientValid(client) || !IsClientValid(target))
+	{
+		return;
+	}
+	
+	if(GetClientTeam(target) == CS_TEAM_CT)
+	{
+		SwapPlayerDeath[target] = false;
+		SwapRoundEnd[target] = false;
+		
+		DropBomb(target);
+		
+		if(GetConVarInt(hEnableResetScore))
+		{
+			ResetScore(target);
+		}
+		
+		// Thanks Peace-Maker
+		if(GetEntProp(target, Prop_Send, "m_bHasDefuser") == 1)
+		{
+			SetEntProp(target, Prop_Send, "m_bHasDefuser", 0);
+			CS_SwitchTeam(target, CS_TEAM_T);
+			if(GetConVarInt(hDefuserDrop))
+			{
+				GivePlayerItem(target, "item_defuser");
+			}
+		}
+		else if(GetEntProp(target, Prop_Send, "m_bHasDefuser") == 0)
+		{
+			CS_SwitchTeam(target, CS_TEAM_T);
+		}
+		CS_UpdateClientModel(target);
+		LogAction(client, target, "\"%L\" was moved to T by \"%L\"", target, client);
+	}
+	else if(GetClientTeam(target) == CS_TEAM_T)
+	{
+		SwapPlayerDeath[target] = false;
+		SwapRoundEnd[target] = false;
+		
+		DropBomb(target);
+		
+		if(GetConVarInt(hEnableResetScore))
+		{
+			ResetScore(target);
+		}
+		
+		CS_SwitchTeam(target, CS_TEAM_CT);
+		LogAction(client, target, "\"%L\" was moved to CT by \"%L\"", target, client);
+		CS_UpdateClientModel(target);
+	}
+	CPrintToChat(target, "%T", "ExchangeTeams", target, sMoveTag, client);
+}
+
+stock SwitchPlayerSpecTeam(client, target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
 	{
@@ -1500,7 +1579,7 @@ SwitchPlayerSpecTeam(client, target)
 	}
 }
 
-CheckClients(client, target)
+stock CheckClients(client, target)
 {
 	if (target == 0)
 	{
@@ -1512,7 +1591,7 @@ CheckClients(client, target)
 	}
 }
 
-AddPlayerList(Handle:hMenu)
+stock AddPlayerList(Handle:hMenu)
 {
 	decl String:name[MAX_NAME_LENGTH];
 	decl String:listname[128];
@@ -1569,7 +1648,7 @@ AddPlayerList(Handle:hMenu)
 	}
 }
 
-AddPlayerListCT(Handle:hMenu)
+stock AddPlayerListCT(Handle:hMenu)
 {
 	decl String:name[MAX_NAME_LENGTH];
 	decl String:listname[128];
@@ -1631,7 +1710,7 @@ AddPlayerListCT(Handle:hMenu)
 	}
 }
 
-AddPlayerListT(Handle:hMenu)
+stock AddPlayerListT(Handle:hMenu)
 {
 	decl String:name[MAX_NAME_LENGTH];
 	decl String:listname[128];

@@ -321,4 +321,11 @@
 		"chi"		"{1} {green}你必须在队伍里!"
 		"de"		"{1} {green}Sie müssen in ein Team sein!"
 	}
+
+	"ExchangeTeams"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}has moved all players to the opponent team!"
+		"de"		"{1} {lightgreen}{2} {green}hat alle Spieler ins gegnerische Team verschoben!"
+	}
 }
