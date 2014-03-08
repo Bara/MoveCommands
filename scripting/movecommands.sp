@@ -28,7 +28,7 @@
 #include <cstrike>
 #define REQUIRE_EXTENSIONS
 
-#define PLUGIN_VERSION "1.3.110"
+#define PLUGIN_VERSION "1.3.113"
 
 #define UPDATE_URL    "http://update.bara.in/movecommands.txt"
 
@@ -36,7 +36,6 @@ new Handle:hAdminMenu;
 
 new Handle:hEnableAdminMenu = INVALID_HANDLE;
 new Handle:hEnableAFK = INVALID_HANDLE;
-new Handle:hEnableResetScoreCommand = INVALID_HANDLE;
 new Handle:hEnableSpec = INVALID_HANDLE;
 new Handle:hEnableSwap = INVALID_HANDLE;
 new Handle:hEnableSwapCT = INVALID_HANDLE;
@@ -97,7 +96,6 @@ public OnPluginStart()
 	
 	// Enable/Disable Commands
 	hEnableAdminMenu = AutoExecConfig_CreateConVar("movecommands_enable_adminmenu", "1", "Enable / Disable MoveCommands in Adminmenu", _, true, 0.0, true, 1.0);
-	hEnableResetScoreCommand = AutoExecConfig_CreateConVar("movecommands_enable_resetscore_command", "0", "Enable / Disable ResetScore Command", _, true, 0.0, true, 1.0);
 	hEnableAFK = AutoExecConfig_CreateConVar("movecommands_enable_afk", "1", "Enable / Disable AFK Command", _, true, 0.0, true, 1.0);
 	hEnableSpec = AutoExecConfig_CreateConVar("movecommands_enable_spec", "1", "Enable / Disable Spec Command", _, true, 0.0, true, 1.0);
 	hEnableSwap = AutoExecConfig_CreateConVar("movecommands_enable_swap", "1", "Enable / Disable Swap Command", _, true, 0.0, true, 1.0);
@@ -137,10 +135,6 @@ public OnPluginStart()
 	RegAdminCmd("sm_swapallspec", Command_SwapAllSpec, ADMFLAG_GENERIC);
 
 	RegConsoleCmd("sm_afk", Command_AFK);
-
-	RegConsoleCmd("sm_resetscore", Command_ResetScore);
-	RegConsoleCmd("sm_scorereset", Command_ResetScore);
-	RegConsoleCmd("sm_rs", Command_ResetScore);
 	
 	HookEvent("player_death", Event_PlayerDeath);
 	HookEvent("player_team", Event_PlayerTeam);
@@ -330,23 +324,6 @@ public Action:Command_AFK(client, args)
 	{
 		ChangeClientTeam(client, CS_TEAM_SPECTATOR);
 		CPrintToChatAll("%t", "AFK", sMoveTag, client);
-	}
-}
-
-public Action:Command_ResetScore(client, args)
-{
-	if(!GetConVarInt(hEnableResetScoreCommand))
-	{
-		return;
-	}
-
-	if(GetClientTeam(client) == CS_TEAM_T || GetClientTeam(client) == CS_TEAM_CT)
-	{
-		ResetScore(client);
-	}
-	else
-	{
-		CPrintToChat(client, "%t", "WrongTeam", sMoveTag);
 	}
 }
 
