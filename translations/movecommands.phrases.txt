@@ -155,6 +155,12 @@
 		"dk"		"Flyt spiller til observatør"
 		"fr"		"Déplacez joueurs en spectateur"
 	}
+
+	"AdminMenuTitleExchange"
+	{
+		"en"		"Exchange Teams"
+		"de"		"Teams tauschen"
+	}
 	
 	"AdminMenuTeamTName"
 	{

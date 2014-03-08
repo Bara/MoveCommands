@@ -1,6 +1,5 @@
 /*
 	ToDo:
-		- Exchange Teams
 		- Swap all Players (CT/T/Both) to CT/T/Spec
 
 	Changes:
@@ -25,7 +24,7 @@
 #include <cstrike>
 #define REQUIRE_EXTENSIONS
 
-#define PLUGIN_VERSION "1.3.1"
+#define PLUGIN_VERSION "1.3.12"
 
 #define UPDATE_URL    "http://update.bara.in/movecommands.txt"
 
@@ -701,6 +700,10 @@ AttachAdminMenu()
 	{
 		AddToTopMenu(hAdminMenu, "sm_spec", TopMenuObject_Item, AdminMenu_SpecPlayer, menu_category, "sm_spec", ADMFLAG_GENERIC);
 	}
+	if(GetConVarInt(hEnableExchangeTeams))
+	{
+		AddToTopMenu(hAdminMenu, "sm_exchange", TopMenuObject_Item, AdminMenu_ExchangeTeam, menu_category, "sm_exchange", ADMFLAG_GENERIC);
+	}
 }
 
 public Handle_Category( Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, param, String:buffer[], maxlength )
@@ -796,6 +799,21 @@ public AdminMenu_SpecPlayer(Handle:topmenu, TopMenuAction:action, TopMenuObject:
 	else if (action == TopMenuAction_SelectOption)
 	{
 		SpecDisplayInfoMenu(param);
+	}
+}
+
+public AdminMenu_ExchangeTeam(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, param, String:buffer[], maxlength)
+{
+	if (action == TopMenuAction_DisplayOption)
+	{
+		Format(buffer, maxlength, "%T", "AdminMenuTitleExchange", param);
+	}
+	else if (action == TopMenuAction_SelectOption)
+	{
+		for(new i = 1; i < MaxClients; i++)
+		{
+			ExchangeTeam(param, i);
+		}
 	}
 }
 
