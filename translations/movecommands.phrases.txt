@@ -161,6 +161,24 @@
 		"en"		"Exchange Teams"
 		"de"		"Teams tauschen"
 	}
+
+	"AdminMenuTitleAllCT"
+	{
+		"en"		"Move all players to CT"
+		"de"		"Alle Spieler ins CT Team"
+	}
+
+	"AdminMenuTitleAllT"
+	{
+		"en"		"Move all players to T"
+		"de"		"Alle Spieler ins T Team"
+	}
+
+	"AdminMenuTitleAllSpec"
+	{
+		"en"		"Move all players to Spectator"
+		"de"		"Alle Spieler ins Zuschauer Team"
+	}
 	
 	"AdminMenuTeamTName"
 	{
@@ -333,5 +351,26 @@
 		"#format"	"{1:s},{2:N}"
 		"en"		"{1} {lightgreen}{2} {green}has moved all players to the opponent team!"
 		"de"		"{1} {lightgreen}{2} {green}hat alle Spieler ins gegnerische Team verschoben!"
+	}
+
+	"MoveAllT"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}has moved all players to T!"
+		"de"		"{1} {lightgreen}{2} {green}hat alle Spieler ins T Team verschoben!"
+	}
+
+	"MoveAllCT"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}has moved all players to CT!"
+		"de"		"{1} {lightgreen}{2} {green}hat alle Spieler ins CT Team verschoben!"
+	}
+
+	"MoveAllSpec"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}has moved all players to Spectator!"
+		"de"		"{1} {lightgreen}{2} {green}hat alle Spieler ins Zuschauer Team verschoben!"
 	}
 }

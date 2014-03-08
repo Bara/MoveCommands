@@ -1,8 +1,12 @@
 /*
-	ToDo:
-		- Swap all Players (CT/T/Both) to CT/T/Spec
-
 	Changes:
+		- Swap all Players (CT/T/Both) to CT/T/Spec
+			- sm_swapallct
+			- sm_swapallt
+			- sm_swapallspec
+		- Added Exchange Teams
+		- Fixed errors
+		- Cleanup code
 		- Use of GetEngineVersion instead of GetFolderName
 
 
@@ -24,7 +28,7 @@
 #include <cstrike>
 #define REQUIRE_EXTENSIONS
 
-#define PLUGIN_VERSION "1.3.12"
+#define PLUGIN_VERSION "1.3.110"
 
 #define UPDATE_URL    "http://update.bara.in/movecommands.txt"
 
@@ -43,6 +47,9 @@ new Handle:hEnableSwapDeath = INVALID_HANDLE;
 new Handle:hEnableResetScore = INVALID_HANDLE;
 new Handle:hEnableTeamBalance = INVALID_HANDLE;
 new Handle:hEnableExchangeTeams = INVALID_HANDLE;
+new Handle:hEnableSwapAllCT = INVALID_HANDLE;
+new Handle:hEnableSwapAllT = INVALID_HANDLE;
+new Handle:hEnableSwapAllSpec  = INVALID_HANDLE;
 
 new Handle:hBombDrop = INVALID_HANDLE;
 new Handle:hDefuserDrop = INVALID_HANDLE;
@@ -59,7 +66,7 @@ new bool:Balance;
 
 public Plugin:myinfo = 
 {
-	name = "Move Commands ( ResetScore, Switch, Spec)",
+	name = "Move Commands ( ResetScore, Switch, Spec )",
 	author = "Bara",
 	description = "Plugin to switch player and reset score",
 	version = PLUGIN_VERSION,
@@ -68,6 +75,7 @@ public Plugin:myinfo =
 
 public OnPluginStart()
 {
+	LoadTranslations("common.phrases");
 	LoadTranslations("movecommands.phrases");
 	
 	/* if (LibraryExists("updater"))
@@ -88,17 +96,20 @@ public OnPluginStart()
 	AutoExecConfig_SetCreateFile(true);
 	
 	// Enable/Disable Commands
-	hEnableAdminMenu = AutoExecConfig_CreateConVar("movecommands_enable_adminmenu", "1", "Enable / Disable MoveCommands in Adminmenu",_, true, 0.0, true, 1.0);
-	hEnableResetScoreCommand = AutoExecConfig_CreateConVar("movecommands_enable_resetscore_command", "0", "Enable / Disable ResetScore Command",_, true, 0.0, true, 1.0);
-	hEnableAFK = AutoExecConfig_CreateConVar("movecommands_enable_afk", "1", "Enable / Disable AFK Command",_, true, 0.0, true, 1.0);
-	hEnableSpec = AutoExecConfig_CreateConVar("movecommands_enable_spec", "1", "Enable / Disable Spec Command",_, true, 0.0, true, 1.0);
-	hEnableSwap = AutoExecConfig_CreateConVar("movecommands_enable_swap", "1", "Enable / Disable Swap Command",_, true, 0.0, true, 1.0);
-	hEnableSwapCT = AutoExecConfig_CreateConVar("movecommands_enable_swap_ct", "1", "Enable / Disable Swap CT Command",_, true, 0.0, true, 1.0);
-	hEnableSwapT = AutoExecConfig_CreateConVar("movecommands_enable_swap_t", "1", "Enable / Disable Swap T Command",_, true, 0.0, true, 1.0);
-	hEnableFSwap = AutoExecConfig_CreateConVar("movecommands_enable_fswap", "1", "Enable / Disable Force Swap Command",_, true, 0.0, true, 1.0);
-	hEnableSwapRoundEnd = AutoExecConfig_CreateConVar("movecommands_enable_swaproundend", "1", "Enable / Disable Swap Round End Command",_, true, 0.0, true, 1.0);
-	hEnableSwapDeath = AutoExecConfig_CreateConVar("movecommands_enable_swapdeath", "1", "Enable / Disable Swap Player Death Command",_, true, 0.0, true, 1.0);
-	hEnableExchangeTeams = AutoExecConfig_CreateConVar("movecommands_enable_exchangeteams", "1", "Enable / Disable Exchange Teams Command",_, true, 0.0, true, 1.0);
+	hEnableAdminMenu = AutoExecConfig_CreateConVar("movecommands_enable_adminmenu", "1", "Enable / Disable MoveCommands in Adminmenu", _, true, 0.0, true, 1.0);
+	hEnableResetScoreCommand = AutoExecConfig_CreateConVar("movecommands_enable_resetscore_command", "0", "Enable / Disable ResetScore Command", _, true, 0.0, true, 1.0);
+	hEnableAFK = AutoExecConfig_CreateConVar("movecommands_enable_afk", "1", "Enable / Disable AFK Command", _, true, 0.0, true, 1.0);
+	hEnableSpec = AutoExecConfig_CreateConVar("movecommands_enable_spec", "1", "Enable / Disable Spec Command", _, true, 0.0, true, 1.0);
+	hEnableSwap = AutoExecConfig_CreateConVar("movecommands_enable_swap", "1", "Enable / Disable Swap Command", _, true, 0.0, true, 1.0);
+	hEnableSwapCT = AutoExecConfig_CreateConVar("movecommands_enable_swap_ct", "1", "Enable / Disable Swap CT Command", _, true, 0.0, true, 1.0);
+	hEnableSwapT = AutoExecConfig_CreateConVar("movecommands_enable_swap_t", "1", "Enable / Disable Swap T Command", _, true, 0.0, true, 1.0);
+	hEnableFSwap = AutoExecConfig_CreateConVar("movecommands_enable_fswap", "1", "Enable / Disable Force Swap Command", _, true, 0.0, true, 1.0);
+	hEnableSwapRoundEnd = AutoExecConfig_CreateConVar("movecommands_enable_swaproundend", "1", "Enable / Disable Swap Round End Command", _, true, 0.0, true, 1.0);
+	hEnableSwapDeath = AutoExecConfig_CreateConVar("movecommands_enable_swapdeath", "1", "Enable / Disable Swap Player Death Command", _, true, 0.0, true, 1.0);
+	hEnableExchangeTeams = AutoExecConfig_CreateConVar("movecommands_enable_exchangeteams", "1", "Enable / Disable Exchange Teams Command", _, true, 0.0, true, 1.0);
+	hEnableSwapAllCT = AutoExecConfig_CreateConVar("movecommands_enable_swapallct", "1", "Enable / Disable Swap All Players To CT Command", _, true, 0.0, true, 1.0);
+	hEnableSwapAllT = AutoExecConfig_CreateConVar("movecommands_enable_swapallt", "1", "Enable / Disable Swap All Players To T Command", _, true, 0.0, true, 1.0);
+	hEnableSwapAllSpec = AutoExecConfig_CreateConVar("movecommands_enable_swapallspec", "1", "Enable / Disable Swap All Players To Spec Command", _, true, 0.0, true, 1.0);
 
 	// Enable/Disable Drops
 	hBombDrop = AutoExecConfig_CreateConVar("movecommands_enable_drop_bomb", "1", "Enable / Disable Bomb Drop",_, true, 0.0, true, 1.0);
@@ -121,6 +132,9 @@ public OnPluginStart()
 	RegAdminCmd("sm_swaproundend", Command_SwapRoundEnd, ADMFLAG_GENERIC);
 	RegAdminCmd("sm_swapdeath", Command_SwapPlayerDeath, ADMFLAG_GENERIC);
 	RegAdminCmd("sm_exchange", Command_ExchangeTeam, ADMFLAG_GENERIC);
+	RegAdminCmd("sm_swapallct", Command_SwapAllCT, ADMFLAG_GENERIC);
+	RegAdminCmd("sm_swapallt", Command_SwapAllT, ADMFLAG_GENERIC);
+	RegAdminCmd("sm_swapallspec", Command_SwapAllSpec, ADMFLAG_GENERIC);
 
 	RegConsoleCmd("sm_afk", Command_AFK);
 
@@ -357,6 +371,11 @@ public Action:Command_Spec(client, args)
 	{
 		return;
 	}
+
+	if(!IsClientValid(target))
+	{
+		return;
+	}
 	
 	if(SwapRoundEnd[target])
 	{
@@ -393,6 +412,11 @@ public Action:Command_Swap(client, args)
 
 	new target = FindTarget(client, arg1);
 	if (target == -1)
+	{
+		return;
+	}
+
+	if(!IsClientValid(target))
 	{
 		return;
 	}
@@ -441,6 +465,11 @@ public Action:Command_SwapCT(client, args)
 		return;
 	}
 
+	if(!IsClientValid(target))
+	{
+		return;
+	}
+
 	if(GetClientTeam(target) < 2)
 	{
 		return;
@@ -481,6 +510,11 @@ public Action:Command_SwapT(client, args)
 
 	new target = FindTarget(client, arg1);
 	if (target == -1)
+	{
+		return;
+	}
+
+	if(!IsClientValid(target))
 	{
 		return;
 	}
@@ -529,6 +563,11 @@ public Action:Command_SwapRoundEnd(client, args)
 		return;
 	}
 
+	if(!IsClientValid(target))
+	{
+		return;
+	}
+
 	if(GetClientTeam(target) < 2)
 	{
 		return;
@@ -567,6 +606,11 @@ public Action:Command_SwapPlayerDeath(client, args)
 
 	new target = FindTarget(client, arg1);
 	if (target == -1)
+	{
+		return;
+	}
+
+	if(!IsClientValid(target))
 	{
 		return;
 	}
@@ -613,6 +657,11 @@ public Action:Command_FSwap(client, args)
 		return;
 	}
 
+	if(!IsClientValid(target))
+	{
+		return;
+	}
+
 	if(GetClientTeam(target) < 2)
 	{
 		return;
@@ -636,7 +685,85 @@ public Action:Command_ExchangeTeam(client, args)
 	
 	for(new i = 1; i < MaxClients; i++)
 	{
-		ExchangeTeam(client, i);
+		if(IsClientValid(i))
+		{
+			ExchangeTeam(client, i);
+		}
+	}
+}
+
+public Action:Command_SwapAllCT(client, args)
+{
+	if(!GetConVarInt(hEnableSwapAllCT))
+	{
+		return;
+	}
+	
+	if (args > 0)
+	{
+		ReplyToCommand(client, "sm_swapallct");
+		return;
+	}
+	
+	for(new i = 1; i < MaxClients; i++)
+	{
+		if(IsClientValid(i))
+		{
+			if(GetClientTeam(i) == CS_TEAM_T)
+			{
+				SwapAllPlayer(client, i, CS_TEAM_CT);
+			}
+		}
+	}
+}
+
+public Action:Command_SwapAllT(client, args)
+{
+	if(!GetConVarInt(hEnableSwapAllT))
+	{
+		return;
+	}
+	
+	if (args > 0)
+	{
+		ReplyToCommand(client, "sm_swapallt");
+		return;
+	}
+	
+	for(new i = 1; i < MaxClients; i++)
+	{
+		if(IsClientValid(i))
+		{
+			if(GetClientTeam(i) == CS_TEAM_CT)
+			{
+				SwapAllPlayer(client, i, CS_TEAM_T);
+			}
+		}
+	}
+}
+
+public Action:Command_SwapAllSpec(client, args)
+{
+	if(!GetConVarInt(hEnableSwapAllSpec))
+	{
+		return;
+	}
+	
+	if (args > 0)
+	{
+		ReplyToCommand(client, "sm_swapallspec");
+		return;
+	}
+	
+	for(new i = 1; i < MaxClients; i++)
+	{
+		if(IsClientValid(i))
+		{
+			if(GetClientTeam(i) == CS_TEAM_CT || GetClientTeam(i) == CS_TEAM_T)
+			{
+				SwapAllPlayer(client, i, CS_TEAM_SPECTATOR);
+			}
+		}
 	}
 }
 
@@ -703,6 +830,18 @@ AttachAdminMenu()
 	if(GetConVarInt(hEnableExchangeTeams))
 	{
 		AddToTopMenu(hAdminMenu, "sm_exchange", TopMenuObject_Item, AdminMenu_ExchangeTeam, menu_category, "sm_exchange", ADMFLAG_GENERIC);
+	}
+	if(GetConVarInt(hEnableSwapAllCT))
+	{
+		AddToTopMenu(hAdminMenu, "sm_swapallct", TopMenuObject_Item, AdminMenu_SwapAllCT, menu_category, "sm_swapallct", ADMFLAG_GENERIC);
+	}
+	if(GetConVarInt(hEnableSwapAllT))
+	{
+		AddToTopMenu(hAdminMenu, "sm_swapallt", TopMenuObject_Item, AdminMenu_SwapAllT, menu_category, "sm_swapallt", ADMFLAG_GENERIC);
+	}
+	if(GetConVarInt(hEnableSwapAllSpec))
+	{
+		AddToTopMenu(hAdminMenu, "sm_swapallspec", TopMenuObject_Item, AdminMenu_SwapAllSpec, menu_category, "sm_swapallspec", ADMFLAG_GENERIC);
 	}
 }
 
@@ -813,6 +952,60 @@ public AdminMenu_ExchangeTeam(Handle:topmenu, TopMenuAction:action, TopMenuObjec
 		for(new i = 1; i < MaxClients; i++)
 		{
 			ExchangeTeam(param, i);
+		}
+	}
+}
+
+public AdminMenu_SwapAllCT(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, param, String:buffer[], maxlength)
+{
+	if (action == TopMenuAction_DisplayOption)
+	{
+		Format(buffer, maxlength, "%T", "AdminMenuTitleAllCT", param);
+	}
+	else if (action == TopMenuAction_SelectOption)
+	{
+		for(new i = 1; i < MaxClients; i++)
+		{
+			if(IsClientValid(i) && GetClientTeam(i) == CS_TEAM_T)
+			{
+				SwapAllPlayer(param, i, CS_TEAM_CT);
+			}
+		}
+	}
+}
+
+public AdminMenu_SwapAllT(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, param, String:buffer[], maxlength)
+{
+	if (action == TopMenuAction_DisplayOption)
+	{
+		Format(buffer, maxlength, "%T", "AdminMenuTitleAllT", param);
+	}
+	else if (action == TopMenuAction_SelectOption)
+	{
+		for(new i = 1; i < MaxClients; i++)
+		{
+			if(IsClientValid(i) && GetClientTeam(i) == CS_TEAM_CT)
+			{
+				SwapAllPlayer(param, i, CS_TEAM_T);
+			}
+		}
+	}
+}
+
+public AdminMenu_SwapAllSpec(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, param, String:buffer[], maxlength)
+{
+	if (action == TopMenuAction_DisplayOption)
+	{
+		Format(buffer, maxlength, "%T", "AdminMenuTitleAllSpec", param);
+	}
+	else if (action == TopMenuAction_SelectOption)
+	{
+		for(new i = 1; i < MaxClients; i++)
+		{
+			if(IsClientValid(i) && GetClientTeam(i) == CS_TEAM_T || GetClientTeam(i) == CS_TEAM_CT)
+			{
+				SwapAllPlayer(param, i, CS_TEAM_SPECTATOR);
+			}
 		}
 	}
 }
@@ -1266,7 +1459,6 @@ stock SwitchPlayerOtherTeam(client, target)
 			ResetScore(target);
 		}
 		
-		
 		// Thanks Peace-Maker
 		if(GetEntProp(target, Prop_Send, "m_bHasDefuser") == 1)
 		{
@@ -1516,6 +1708,52 @@ stock FSwitchPlayerOtherTeam(client, target)
 		CS_UpdateClientModel(target);
 		
 		CPrintToChatAll("%t", "MovedCT", sMoveTag, client, target);
+	}
+}
+
+stock SwapAllPlayer(client, target, team)
+{
+	if(!IsClientValid(client) || !IsClientValid(target))
+	{
+		return;
+	}
+	
+	SwapPlayerDeath[target] = false;
+	SwapRoundEnd[target] = false;
+	
+	if(GetConVarInt(hEnableResetScore))
+	{
+		ResetScore(target);
+	}
+
+	if(team == 1) // Spectator
+	{
+		ChangeClientTeam(target, CS_TEAM_SPECTATOR);
+		CPrintToChat(target, "%T", "MoveAllSpec", target, sMoveTag, client);
+	}
+	else if(team == 2) // Terrorist
+	{
+		DropBomb(target);
+		if(GetEntProp(target, Prop_Send, "m_bHasDefuser") == 1)
+		{
+			SetEntProp(target, Prop_Send, "m_bHasDefuser", 0);
+			CS_SwitchTeam(target, team);
+			if(GetConVarInt(hDefuserDrop))
+			{
+				GivePlayerItem(target, "item_defuser");
+			}
+		}
+		else if(GetEntProp(target, Prop_Send, "m_bHasDefuser") == 0)
+		{
+			CS_SwitchTeam(target, team);
+		}
+		CPrintToChat(target, "%T", "MoveAllT", target, sMoveTag, client);
+	}
+	else if(team == 3) // Counter-Terrorist
+	{
+		DropBomb(target);
+		CS_SwitchTeam(target, team);
+		CPrintToChat(target, "%T", "MoveAllCT", target, sMoveTag, client);
 	}
 }
 
@@ -1869,7 +2107,7 @@ stock DropBomb(client)
 {
 	if(GetConVarInt(hBombDrop))
 	{
-		if(GetPlayerWeaponSlot(client, CS_SLOT_C4) != -1)
+		if(IsPlayerAlive(client) && GetPlayerWeaponSlot(client, CS_SLOT_C4) != -1)
 		{
 			CS_DropWeapon(client, GetPlayerWeaponSlot(client, CS_SLOT_C4), true, true);
 		}
