@@ -4,15 +4,18 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.2.1"
+			"Latest"	"1.3.0"
 		}
 		
-		"Notes"	"Added Simple Team Balancer ( Thanks altex )"
-		"Notes"	"Added Reset Score Player Commands"
-		"Notes" "Updated ResetScore Part"
-		"Notes" "Updated LogAction"
-		"Notes" "Removed Admin Checks ( Admin Overrides works now )"
-		"Notes" "Removed not used translations"
+		"Notes" "Cleanup code"
+		"Notes"	"4 new Feature:"
+		"Notes" "- Exchange Teams"
+		"Notes" "- SwapAllT"
+		"Notes" "- SwapAllCT"
+		"Notes" "- SwapAllSpec"
+		"Notes" "Removed ResetScore Commands"
+		"Notes" "Fixed some error"
+		"Notes" "Use of GetEngineVersion instead of GetFolderName"
 	}
 	
 	"Files"
