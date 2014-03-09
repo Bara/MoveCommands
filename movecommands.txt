@@ -4,7 +4,7 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.3.0"
+			"Latest"	"1.3.1"
 		}
 		
 		"Notes" "Cleanup code"
@@ -16,6 +16,7 @@
 		"Notes" "Removed ResetScore Commands"
 		"Notes" "Fixed some error"
 		"Notes" "Use of GetEngineVersion instead of GetFolderName"
+		"Notes" "1.3.1: Added CS_UpdateClientModel to SwapAll Commands"
 	}
 	
 	"Files"

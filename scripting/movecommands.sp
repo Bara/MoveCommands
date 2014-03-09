@@ -1,17 +1,3 @@
-/*
-	Changes:
-		- Swap all Players (CT/T/Both) to CT/T/Spec
-			- sm_swapallct
-			- sm_swapallt
-			- sm_swapallspec
-		- Added Exchange Teams
-		- Fixed errors
-		- Cleanup code
-		- Use of GetEngineVersion instead of GetFolderName
-
-
-*/
-
 #pragma semicolon 1
 
 #include <sourcemod>
@@ -29,7 +15,7 @@
 #define REQUIRE_EXTENSIONS
 
 #define MOVECOMMANDS_NAME "Move Commands ( ResetScore, Switch, Spec )"
-#define MOVECOMMANDS_VERSION "1.3.0"
+#define MOVECOMMANDS_VERSION "1.3.1"
 
 #define UPDATE_URL    "http://update.bara.in/movecommands.txt"
 
@@ -1725,11 +1711,13 @@ stock SwapAllPlayer(client, target, team)
 		{
 			CS_SwitchTeam(target, team);
 		}
+		CS_UpdateClientModel(target);
 		CPrintToChat(target, "%T", "MoveAllT", target, sMoveTag, client);
 	}
 	else if(team == 3) // Counter-Terrorist
 	{
 		DropBomb(target);
+		CS_UpdateClientModel(target);
 		CS_SwitchTeam(target, team);
 		CPrintToChat(target, "%T", "MoveAllCT", target, sMoveTag, client);
 	}
