@@ -21,14 +21,15 @@
 
 #undef REQUIRE_PLUGIN
 #include <adminmenu>
-// #include <updater>
+#include <updater>
 #define REQUIRE_PLUGIN
 
 #undef REQUIRE_EXTENSIONS
 #include <cstrike>
 #define REQUIRE_EXTENSIONS
 
-#define PLUGIN_VERSION "1.3.113"
+#define MOVECOMMANDS_NAME "Move Commands ( ResetScore, Switch, Spec )"
+#define MOVECOMMANDS_VERSION "1.3.0"
 
 #define UPDATE_URL    "http://update.bara.in/movecommands.txt"
 
@@ -65,10 +66,10 @@ new bool:Balance;
 
 public Plugin:myinfo = 
 {
-	name = "Move Commands ( ResetScore, Switch, Spec )",
+	name = MOVECOMMANDS_NAME,
 	author = "Bara",
 	description = "Plugin to switch player and reset score",
-	version = PLUGIN_VERSION,
+	version = MOVECOMMANDS_VERSION,
 	url = "www.bara.in"
 }
 
@@ -77,10 +78,10 @@ public OnPluginStart()
 	LoadTranslations("common.phrases");
 	LoadTranslations("movecommands.phrases");
 	
-	/* if (LibraryExists("updater"))
+	if (LibraryExists("updater"))
 	{
 		Updater_AddPlugin(UPDATE_URL);
-	} */
+	}
 	
 	if(GetEngineVersion() != Engine_CSS && GetEngineVersion() != Engine_CSGO)
 	{
@@ -89,7 +90,7 @@ public OnPluginStart()
 	
 	Format(sMoveTag, sizeof(sMoveTag), "%T", "MessageTag", LANG_SERVER);
 	
-	CreateConVar("movecommands_version", PLUGIN_VERSION, "Move Commands", FCVAR_PLUGIN|FCVAR_NOTIFY|FCVAR_DONTRECORD);
+	CreateConVar("movecommands_version", MOVECOMMANDS_VERSION, MOVECOMMANDS_NAME, FCVAR_PLUGIN|FCVAR_NOTIFY|FCVAR_DONTRECORD);
 	
 	AutoExecConfig_SetFile("plugin.movecommands", "sourcemod");
 	AutoExecConfig_SetCreateFile(true);
@@ -147,13 +148,13 @@ public OnPluginStart()
 	}
 }
 
-/* public OnLibraryAdded(const String:name[])
+public OnLibraryAdded(const String:name[])
 {
 	if (StrEqual(name, "updater"))
 	{
 		Updater_AddPlugin(UPDATE_URL);
 	}
-} */
+}
 
 public OnMapStart()
 {
