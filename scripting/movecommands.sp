@@ -15,9 +15,9 @@
 #define REQUIRE_EXTENSIONS
 
 #define MOVECOMMANDS_NAME "Move Commands ( ResetScore, Switch, Spec )"
-#define MOVECOMMANDS_VERSION "1.3.1"
+#define MOVECOMMANDS_VERSION "1.3.2"
 
-#define UPDATE_URL    "http://update.bara.in/movecommands.txt"
+#define UPDATE_URL    "https://bara.in/update/movecommands.txt"
 
 new Handle:hAdminMenu;
 
