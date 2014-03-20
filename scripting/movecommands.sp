@@ -15,7 +15,7 @@
 #define REQUIRE_EXTENSIONS
 
 #define MOVECOMMANDS_NAME "Move Commands ( ResetScore, Switch, Spec )"
-#define MOVECOMMANDS_VERSION "1.3.2"
+#define MOVECOMMANDS_VERSION "1.3.3"
 
 #define UPDATE_URL    "https://bara.in/update/movecommands.txt"
 
@@ -126,7 +126,10 @@ public OnPluginStart()
 	HookEvent("player_death", Event_PlayerDeath);
 	HookEvent("player_team", Event_PlayerTeam);
 	HookEvent("round_end", Event_RoundEnd);
-	
+}
+
+public OnAllPluginsLoaded()
+{
 	new Handle:topmenu;
 	if (LibraryExists("adminmenu") && ((topmenu = GetAdminTopMenu()) != INVALID_HANDLE))
 	{
@@ -741,22 +744,22 @@ public OnLibraryRemoved(const String:name[])
  
 public OnAdminMenuReady(Handle:topmenu)
 {
-	if(!GetConVarInt(hEnableAdminMenu))
-	{
-		return;
-	}
-	
 	if(topmenu == hAdminMenu)
 	{
 		return;
 	}
 	
 	hAdminMenu = topmenu;
-	AttachAdminMenu();
+	CreateTimer(1.0, Timer_AttachAdminMenu);
 }
 
-AttachAdminMenu()
+public Action:Timer_AttachAdminMenu(Handle:timer)
 {
+	if(!GetConVarInt(hEnableAdminMenu))
+	{
+		return;
+	}
+
 	new TopMenuObject:menu_category = AddToTopMenu(hAdminMenu, "movecommands", TopMenuObject_Category, Handle_Category, INVALID_TOPMENUOBJECT, "movecommands", ADMFLAG_GENERIC);
 	if( menu_category == INVALID_TOPMENUOBJECT )
 	{
