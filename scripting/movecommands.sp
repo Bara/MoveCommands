@@ -15,7 +15,7 @@
 #define REQUIRE_EXTENSIONS
 
 #define MOVECOMMANDS_NAME "Move Commands ( ResetScore, Switch, Spec )"
-#define MOVECOMMANDS_VERSION "1.3.3"
+#define MOVECOMMANDS_VERSION "1.3.4"
 
 #define UPDATE_URL    "https://bara.in/update/movecommands.txt"
 
@@ -180,9 +180,8 @@ public Event_PlayerDeath(Handle:event,const String:name[],bool:dontBroadcast)
 				{
 					ResetScore(client);
 				}
-					
-				CS_SwitchTeam(client, CS_TEAM_T);
-				CPrintToChatAll("%t", "MovedTwithoutAdmin", sMoveTag, client);
+				
+				CreateTimer(0.1, Timer_SwitchPlayerDeathT, client);
 			}
 			else if(GetClientTeam(client) == CS_TEAM_T)
 			{
@@ -193,8 +192,7 @@ public Event_PlayerDeath(Handle:event,const String:name[],bool:dontBroadcast)
 					ResetScore(client);
 				}
 				
-				CS_SwitchTeam(client, CS_TEAM_CT);
-				CPrintToChatAll("%t", "MovedCTwithoutAdmin", sMoveTag, client);
+				CreateTimer(0.1, Timer_SwitchPlayerDeathCT, client);
 			}
 		}
 
@@ -235,6 +233,18 @@ public Event_PlayerDeath(Handle:event,const String:name[],bool:dontBroadcast)
 			CreateTimer(0.1, Timer_ChangeClientTeam, pack);
 		}
 	}
+}
+
+public Action:Timer_SwitchPlayerDeathCT(Handle:timer, any:client)
+{
+	CS_SwitchTeam(client, CS_TEAM_CT);
+	CPrintToChatAll("%t", "MovedCTwithoutAdmin", sMoveTag, client);
+}
+
+public Action:Timer_SwitchPlayerDeathT(Handle:timer, any:client)
+{
+	CS_SwitchTeam(client, CS_TEAM_T);
+	CPrintToChatAll("%t", "MovedTwithoutAdmin", sMoveTag, client);
 }
 
 public Event_PlayerTeam(Handle:event,const String:name[],bool:dontBroadcast)
@@ -933,7 +943,7 @@ public AdminMenu_SwapAllCT(Handle:topmenu, TopMenuAction:action, TopMenuObject:o
 	{
 		for(new i = 1; i < MaxClients; i++)
 		{
-			if(IsClientValid(i) && GetClientTeam(i) == CS_TEAM_T)
+			if(IsClientValid(i) && IsClientInGame(i) && GetClientTeam(i) == CS_TEAM_T)
 			{
 				SwapAllPlayer(param, i, CS_TEAM_CT);
 			}
@@ -951,7 +961,7 @@ public AdminMenu_SwapAllT(Handle:topmenu, TopMenuAction:action, TopMenuObject:ob
 	{
 		for(new i = 1; i < MaxClients; i++)
 		{
-			if(IsClientValid(i) && GetClientTeam(i) == CS_TEAM_CT)
+			if(IsClientValid(i) && IsClientInGame(i) && GetClientTeam(i) == CS_TEAM_CT)
 			{
 				SwapAllPlayer(param, i, CS_TEAM_T);
 			}
@@ -969,9 +979,12 @@ public AdminMenu_SwapAllSpec(Handle:topmenu, TopMenuAction:action, TopMenuObject
 	{
 		for(new i = 1; i < MaxClients; i++)
 		{
-			if(IsClientValid(i) && GetClientTeam(i) == CS_TEAM_T || GetClientTeam(i) == CS_TEAM_CT)
+			if(IsClientValid(i))
 			{
-				SwapAllPlayer(param, i, CS_TEAM_SPECTATOR);
+				if(IsClientInGame(i) && GetClientTeam(i) == CS_TEAM_T || GetClientTeam(i) == CS_TEAM_CT)
+				{
+					SwapAllPlayer(param, i, CS_TEAM_SPECTATOR);
+				}
 			}
 		}
 	}
@@ -1671,8 +1684,8 @@ stock FSwitchPlayerOtherTeam(client, target)
 		}
 		
 		CS_SwitchTeam(target, CS_TEAM_CT);
-		LogAction(client, target, "\"%L\" was moved to CT by \"%L\"", target, client);
 		CS_UpdateClientModel(target);
+		LogAction(client, target, "\"%L\" was moved to CT by \"%L\"", target, client);
 		
 		CPrintToChatAll("%t", "MovedCT", sMoveTag, client, target);
 	}
@@ -1696,6 +1709,10 @@ stock SwapAllPlayer(client, target, team)
 	if(team == 1) // Spectator
 	{
 		ChangeClientTeam(target, CS_TEAM_SPECTATOR);
+
+		SetEntPropEnt(target, Prop_Send, "m_hObserverTarget", -1);
+		SetEntProp(target, Prop_Send, "m_iObserverMode", 4);
+
 		CPrintToChat(target, "%T", "MoveAllSpec", target, sMoveTag, client);
 	}
 	else if(team == 2) // Terrorist
@@ -1720,8 +1737,8 @@ stock SwapAllPlayer(client, target, team)
 	else if(team == 3) // Counter-Terrorist
 	{
 		DropBomb(target);
-		CS_UpdateClientModel(target);
 		CS_SwitchTeam(target, team);
+		CS_UpdateClientModel(target);
 		CPrintToChat(target, "%T", "MoveAllCT", target, sMoveTag, client);
 	}
 }
@@ -1775,8 +1792,8 @@ stock ExchangeTeam(client, target)
 		}
 		
 		CS_SwitchTeam(target, CS_TEAM_CT);
-		LogAction(client, target, "\"%L\" was moved to CT by \"%L\"", target, client);
 		CS_UpdateClientModel(target);
+		LogAction(client, target, "\"%L\" was moved to CT by \"%L\"", target, client);
 	}
 	CPrintToChat(target, "%T", "ExchangeTeams", target, sMoveTag, client);
 }

@@ -159,24 +159,28 @@
 	"AdminMenuTitleExchange"
 	{
 		"en"		"Exchange Teams"
+		"chi"   "交换队伍"
 		"de"		"Teams tauschen"
 	}
 
 	"AdminMenuTitleAllCT"
 	{
 		"en"		"Move all players to CT"
+		"chi"   "移动所有玩家到CT"
 		"de"		"Alle Spieler ins CT Team"
 	}
 
 	"AdminMenuTitleAllT"
 	{
 		"en"		"Move all players to T"
+		"chi"   "移动所有玩家到T"
 		"de"		"Alle Spieler ins T Team"
 	}
 
 	"AdminMenuTitleAllSpec"
 	{
 		"en"		"Move all players to Spectator"
+		"chi"   "移动所有玩家到观看者"
 		"de"		"Alle Spieler ins Zuschauer Team"
 	}
 	
@@ -350,6 +354,7 @@
 	{
 		"#format"	"{1:s},{2:N}"
 		"en"		"{1} {lightgreen}{2} {green}has moved all players to the opponent team!"
+		"chi"		"{1} {lightgreen}{2} {green}执行了换边的操作!"
 		"de"		"{1} {lightgreen}{2} {green}hat alle Spieler ins gegnerische Team verschoben!"
 	}
 
@@ -357,6 +362,7 @@
 	{
 		"#format"	"{1:s},{2:N}"
 		"en"		"{1} {lightgreen}{2} {green}has moved all players to T!"
+		"chi"		"{1} {lightgreen}{2} {green}移动所有玩家到T!"
 		"de"		"{1} {lightgreen}{2} {green}hat alle Spieler ins T Team verschoben!"
 	}
 
@@ -364,6 +370,7 @@
 	{
 		"#format"	"{1:s},{2:N}"
 		"en"		"{1} {lightgreen}{2} {green}has moved all players to CT!"
+		"chi"		"{1} {lightgreen}{2} {green}移动所有玩家到CT!"
 		"de"		"{1} {lightgreen}{2} {green}hat alle Spieler ins CT Team verschoben!"
 	}
 
@@ -371,6 +378,7 @@
 	{
 		"#format"	"{1:s},{2:N}"
 		"en"		"{1} {lightgreen}{2} {green}has moved all players to Spectator!"
+		"chi"		"{1} {lightgreen}{2} {green}移动所有玩家到观看者!"
 		"de"		"{1} {lightgreen}{2} {green}hat alle Spieler ins Zuschauer Team verschoben!"
 	}
 }
