@@ -1,0 +1,384 @@
+"Phrases"
+{
+	"MessageTag"
+	{
+		"en"		"{lightgreen}[Move]"
+		"chi"		"{lightgreen}[Move]"
+		"de"		"{lightgreen}[Move]"
+		"dk"		"{lightgreen}[Move]"
+		"fr"		"{lightgreen}[Move]"
+		"chi"		"{lightgreen}[Move]"
+	}
+	
+	"MovedCTwithoutAdmin"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}has been moved to {lightgreen}CT-Team{green}"
+		"chi"		"{1} {lightgreen}{2} {green}被移动到 {lightgreen}CT{green}"
+		"de"		"{1} {lightgreen}{2} {green}wurde ins {lightgreen}CT-Team {green}verschoben"
+		"dk"		"{1} {lightgreen}{2} {green}er blevet flyttet til {lightgreen}CT-Team{green}"
+		"fr"		"{1} {lightgreen}{2} {green}a été déplacé vers {lightgreen}CT-Team{green}"
+	}
+	
+	"MovedTwithoutAdmin"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}has been moved to {lightgreen}T-Team{green}"
+		"chi"		"{1} {lightgreen}{2} {green}被移动到{lightgreen}T{green}"
+		"de"		"{1} {lightgreen}{2} {green}wurde ins {lightgreen}T-Team {green}verschoben"
+		"dk"		"{1} {lightgreen}{2} {green}er blevet flyttet til {lightgreen}T-Team{green}"
+		"fr"		"{1} {lightgreen}{2} {green}a été déplacé vers {lightgreen}T-Team{green}"
+	}
+	
+	"AFK"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}is now AFK!"
+		"chi"		"{1} {lightgreen}{2} {green}现在是AFK状态！"
+		"de"		"{1} {lightgreen}{2} {green}ist jetzt AFK!"
+		"dk"		"{1} {lightgreen}{2} {green}er AFK!"
+		"fr"		"{1} {lightgreen}{2} {green}est maintenant AFK!"
+	}
+	
+	"SwapRoundEndNoLonger"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}will no longer be moved to the other team!"
+		"chi"		"{1} {lightgreen}{2} {green}不能继续移动到另外的队伍!"
+		"de"		"{1} {lightgreen}{2} {green}wird nicht mehr am Rundenende ins andere Team verschoben!"
+		"dk"		"{1} {lightgreen}{2} {green}vil ikke længere blive flyttet til det modsatte hold!"
+		"fr"		"{1} {lightgreen}{2} {green}ne seront plus déplacé à l'autre équipe!"
+	}
+	
+	"SwapPlayerDeathNoLonger"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}will no longer be moved to the other team after his death!"
+		"chi"		"{1} {lightgreen}{2} {green}在死亡以后不再能转移队伍!"
+		"de"		"{1} {lightgreen}{2} {green}wird nicht mehr nach seinem Tod ins andere Team verschoben!"
+		"dk"		"{1} {lightgreen}{2} {green}vil ikke længere blive flyttet til det modsatte hold ved død!"
+		"fr"		"{1} {lightgreen}{2} {green}ne seront plus déplacé à l'autre équipe après sa mort!"
+	}
+	
+	"SwapRoundEndAlready"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}will be moved to the other team!"
+		"chi"		"{1} {lightgreen}{2} {green}将被移动到另外的队伍！"
+		"de"		"{1} {lightgreen}{2} {green}wird bereits am Ende der Runde verschoben!"
+		"dk"		"{1} {lightgreen}{2} {green}vil ikke længere blive flyttet til det modsatte hold!"
+		"fr"		"{1} {lightgreen}{2} {green}sera déplacé à l'autre équipe!"
+	}
+	
+	"SwapPlayerDeathAlready"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}will be moved to the other team after his death!"
+		"chi"		"{1} {lightgreen}{2} {green}在死亡后不能移动队伍!"
+		"de"		"{1} {lightgreen}{2} {green}wird bereits verschoben, wenn der Spieler tot ist!"
+		"dk"		"{1} {lightgreen}{2} {green}vil blive flyttet til det modsatte hold ved sin død!"
+		"fr"		"{1} {lightgreen}{2} {green}sera déplacé à l'autre équipe après sa mort!"
+	}
+	
+	"AdminMenuTitle"
+	{
+		"en"		"Move Commands"
+		"chi"		"移动玩家"
+		"de"		"Move Commands"
+		"dk"		"Move Commands"
+		"fr"		"Move Commands"
+	}
+	
+	"AdminMenuNoPlayer"
+	{
+		"#format"	"{1:s}"
+		"en"		"{1} {green}No players available"
+		"chi"		"{1} {green}没有可以移动的玩家"
+		"de"		"{1} {green}Keine Spieler verfügbar"
+	}
+	
+	"AdminMenuTitleSwap"
+	{
+		"en"		"Move players to another team"
+		"chi"		"移动玩家队伍"
+		"de"		"Spieler ins andere Team swappen"
+		"dk"		"Flyt spiller til det modsatte hold"
+		"fr"		"Déplacer les joueurs dans une autre équipe"
+	}
+	
+	"AdminMenuTitleSwapCT"
+	{
+		"en"		"Move players to ct team"
+		"chi"		"移动玩家到CT队伍"
+		"de"		"Spieler ins CT-Team swappen"
+	}
+	
+	"AdminMenuTitleSwapT"
+	{
+		"en"		"Move players to t team"
+		"chi"		"移动玩家至T队伍"
+		"de"		"Spieler ins T-Team swappen"
+	}
+	
+	"AdminMenuTitleFSwap"
+	{
+		"en"		"Move players to the other team immediately [No slay]"
+		"chi"		"立即移动玩家到对面队伍 [存活状态]"
+		"de"		"Spieler sofort ins andere Team swappen [Kein Slay]"
+		"dk"		"Flyt spiller til det modsatte hold med det samme [No slay]"
+		"fr"		"Déplacer de joueurs immédiatement dans l'autre équipee [Pas de slay]"
+	}
+	
+	"AdminMenuTitleSwapRE"
+	{
+		"en"		"Move players to the other team [Roundend]"
+		"chi"		"移动玩家到对面队伍 [本局结束后]"
+		"de"		"Spieler ins andere Team swappen [Rundenende]"
+		"dk"		"Flyt spiller til det modsatte hold [Roundend]"
+		"fr"		"Déplacer les joueurs dans l'autre équipe [Roundend]"
+	}
+	
+	"AdminMenuTitleSwapPD"
+	{
+		"en"		"Move players to the other team [After death]"
+		"chi"		"移动玩家到对面队伍 [玩家死亡后]"
+		"de"		"Spieler ins andere Team swappen [Nach Tod]"
+		"dk"		"Flyt spiller til det modsatte hold ved sin død [After death]"
+		"fr"		"Déplacer les joueurs dans l'autre équipe [après la mort]"
+	}
+	
+	"AdminMenuTitleSpec"
+	{
+		"en"		"Move players to spectator"
+		"chi"		"移动玩家到观看模式"
+		"de"		"Spieler zu Zuschauer swappen"
+		"dk"		"Flyt spiller til observatør"
+		"fr"		"Déplacez joueurs en spectateur"
+	}
+
+	"AdminMenuTitleExchange"
+	{
+		"en"		"Exchange Teams"
+		"chi"   "交换队伍"
+		"de"		"Teams tauschen"
+	}
+
+	"AdminMenuTitleAllCT"
+	{
+		"en"		"Move all players to CT"
+		"chi"   "移动所有玩家到CT"
+		"de"		"Alle Spieler ins CT Team"
+	}
+
+	"AdminMenuTitleAllT"
+	{
+		"en"		"Move all players to T"
+		"chi"   "移动所有玩家到T"
+		"de"		"Alle Spieler ins T Team"
+	}
+
+	"AdminMenuTitleAllSpec"
+	{
+		"en"		"Move all players to Spectator"
+		"chi"   "移动所有玩家到观看者"
+		"de"		"Alle Spieler ins Zuschauer Team"
+	}
+	
+	"AdminMenuTeamTName"
+	{
+		"en"		"T"
+		"chi"		"T"
+		"de"		"T"
+		"dk"		"T"
+		"fr"		"T"
+	}
+	
+	"AdminMenuTeamSpecName"
+	{
+		"en"		"SPEC"
+		"chi"		"SPEC"
+		"de"		"SPEC"
+		"dk"		"SPEC"
+		"fr"		"SPEC"
+	}
+	
+	"AdminMenuMoveTypeRE"
+	{
+		"en"		"Rundend"
+		"chi"		"本局结束"
+		"de"		"Rundenende"
+		"dk"		"Rundte"
+		"fr"		"Rundend"
+	}
+	
+	"AdminMenuMoveTypePD"
+	{
+		"en"		"After death"
+		"chi"		"死亡后"
+		"de"		"Nach Tod"
+		"dk"		"Ved død"
+		"fr"		"après la mort"
+	}
+	
+	"AdminMenuTeamCTName"
+	{
+		"en"		"CT"
+		"chi"		"CT"
+		"de"		"CT"
+		"dk"		"CT"
+		"fr"		"CT"
+	}
+	
+	"AdminMenuTitlePlayerChoose"
+	{
+		"en"		"Select a player:"
+		"chi"		"选择玩家:"
+		"de"		"Wähle Spieler:"
+		"dk"		"Vælg spiller:"
+		"fr"		"Sélectionnez un joueur:"
+	}
+	
+	"PlayerNoLongerValid"
+	{
+		"#format"	"{1:s}"
+		"en"		"{1} {lightgreen}The player is unavailable!"
+		"chi"		"{1} {lightgreen}玩家状态不能移动!"
+		"de"		"{1} {lightgreen}Spieler nicht mehr verfuegbar!"
+		"dk"		"{1} {lightgreen}Spilleren er ikke tilgængelig!"
+		"fr"		"{1} {lightgreen}Le joueur est indisponible!"
+	}
+	
+	"PlayerInvalid"
+	{
+		"#format"	"{1:s}"
+		"en"		"{1} {lightgreen}Invalid target"
+		"chi"		"{1} {lightgreen}非法目标"
+		"de"		"{1} {lightgreen}Ungueltiges Ziel"
+		"dk"		"{1} {lightgreen}Ugyldigt spiller id"
+		"fr"		"{1} {lightgreen}cible invalide"
+	}
+	
+	"MovedT"
+	{
+		"#format"	"{1:s},{2:N},{3:N}"
+		"en"		"{1} {lightgreen}{2} {green}has moved {lightgreen}{3} {green}to the {lightgreen}T-Team{green}!"
+		"chi"		"{1} {lightgreen}{2} {green}移动 {lightgreen}{3} {green}到 {lightgreen}T队伍{green}!"
+		"de"		"{1} {lightgreen}{2} {green}hat {lightgreen}{3} {green}ins {lightgreen}T-Team {green}verschoben!"
+		"dk"		"{1} {lightgreen}{2} {green}flyttede {lightgreen}{3} {green}til {lightgreen}T-Team{green}!"
+		"fr"		"{1} {lightgreen}{2} {green}déplacé a {lightgreen}{3} {green}à l' {lightgreen}T-Team{green}!"
+	}
+	
+	"MovedCT"
+	{
+		"#format"	"{1:s},{2:N},{3:N}"
+		"en"		"{1} {lightgreen}{2} {green}has moved {lightgreen}{3} {green}to the {lightgreen}CT-Team{green}!"
+		"chi"		"{1} {lightgreen}{2} {green}移动 {lightgreen}{3} {green}到 {lightgreen}CT队伍{green}!"
+		"de"		"{1} {lightgreen}{2} {green}hat {lightgreen}{3} {green}ins {lightgreen}CT-Team {green}verschoben!"
+		"dk"		"{1} {lightgreen}{2} {green}flyttede {lightgreen}{3} {green}til {lightgreen}CT-Team{green}!"
+		"fr"		"{1} {lightgreen}{2} {green}déplacé a {lightgreen}{3} {green}à l' {lightgreen}CT-Team{green}!"
+	}
+	
+	"MovedSpec"
+	{
+		"#format"	"{1:s},{2:N},{3:N}"
+		"en"		"{1} {lightgreen}{2} {green}has moved {lightgreen}{3} {green}to the {lightgreen}spectators{green}!"
+		"chi"		"{1} {lightgreen}{2} {green}移动 {lightgreen}{3} {green}到 {lightgreen}观看者{green}!"
+		"de"		"{1} {lightgreen}{2} {green}hat {lightgreen}{3} {green}zu den {lightgreen}Zuschauer {green}verschoben!"
+		"dk"		"{1} {lightgreen}{2} {green}flyttede {lightgreen}{3} {green}til {lightgreen}observatør{green}!"
+		"fr"		"{1} {lightgreen}{2} {green}déplacé a {lightgreen}{3} {green}à l' {lightgreen}spectators{green}!"
+	}
+	
+	"MovedTRE"
+	{
+		"#format"	"{1:s},{2:N},{3:N}"
+		"en"		"{1} {lightgreen}{2} {green}will be moved from {lightgreen}{3} {green}to the {lightgreen}T-Team at the end of the round{green}!"
+		"chi"		"{1} {lightgreen}{2} {green}在本局结束后被{lightgreen}{3} {green}移动到 {lightgreen}T队伍{green}!"
+		"de"		"{1} {lightgreen}{2} {green}wird von {lightgreen}{3} {green} am {lightgreen}Ende der Runde {green}ins {lightgreen}T-Team {green}verschoben!"
+		"dk"		"{1} {lightgreen}{2} {green}vil blive flyttet fra {lightgreen}{3} {green}til {lightgreen}T-Team ved rundens slut{green}!"
+		"fr"		"{1} {lightgreen}{2} {green}être déplacé d' {lightgreen}{3} {green}à l' {lightgreen}T-Team à la fin de la ronde{green}!"
+	}
+	
+	"MovedCTRE"
+	{
+		"#format"	"{1:s},{2:N},{3:N}"
+		"en"		"{1} {lightgreen}{2} {green}will be moved from {lightgreen}{3} {green}to the {lightgreen}CT-Team at the end of the round{green}!"
+		"chi"		"{1} {lightgreen}{2} {green}在本局结束后被 {lightgreen}{3} {green}移动到 {lightgreen}CT队伍{green}!"
+		"de"		"{1} {lightgreen}{2} {green}wird von {lightgreen}{3} {green} am {lightgreen}Ende der Runde {green}ins {lightgreen}CT-Team {green}verschoben!"
+		"dk"		"{1} {lightgreen}{2} {green}vil blive flyttet fra {lightgreen}{3} {green}til {lightgreen}CT-Team når runden er slut{green}!"
+		"fr"		"{1} {lightgreen}{2} {green}être déplacé d' {lightgreen}{3} {green}à l' {lightgreen}CT-Team à la fin de la ronde{green}!"
+	}
+	
+	"MovedTPD"
+	{
+		"#format"	"{1:s},{2:N},{3:N},{4:N}"
+		"en"		"{1} {lightgreen}{2} {green}will be moved from {lightgreen}{3} {green}to the {lightgreen}T-Team {green}, after {lightgreen}{4} {green}is dead!"
+		"chi"		"{1} {lightgreen}{2} {green}被 {lightgreen}{3} {green}移动到 {lightgreen}T队伍 {green}, 在 {lightgreen}{4} {green}死亡后执行!"
+		"de"		"{1} {lightgreen}{2} {green}wird von {lightgreen}{3} {green} ins {lightgreen}T-Team {green}verschoben, sobald {lightgreen}{4} {green}gestorben ist!"
+		"dk"		"{1} {lightgreen}{2} {green}vil blive flyttet fra {lightgreen}{3} {green}til {lightgreen}T-Team {green}, efter {lightgreen}{4} {green}sin død!"
+		"fr"		"{1} {lightgreen}{2} {green}être déplacé d' {lightgreen}{3} {green}à l' {lightgreen}T-Team {green}, après {lightgreen}{4} {green}est mort!"
+	}
+
+	"MovedCTPD"
+	{
+		"#format"	"{1:s},{2:N},{3:N},{4:N}"
+		"en"		"{1} {lightgreen}{2} {green}will be moved from {lightgreen}{3} {green}to the {lightgreen}CT-Team {green}, after {lightgreen}{4} {green}is dead!"
+		"chi"		"{1} {lightgreen}{2} {green}被 {lightgreen}{3} {green}移动到 {lightgreen}CT队伍 {green}, 在 {lightgreen}{4} {green}死亡后执行!"
+		"de"		"{1} {lightgreen}{2} {green}wird von {lightgreen}{3} {green} ins {lightgreen}CT-Team {green}verschoben, sobald {lightgreen}{4} {green}gestorben ist!"
+		"dk"		"{1} {lightgreen}{2} {green}vil blive flyttet fra {lightgreen}{3} {green}til {lightgreen}CT-Team {green}, efter {lightgreen}{4} {green}sin død!"
+		"fr"		"{1} {lightgreen}{2} {green}être déplacé d' {lightgreen}{3} {green}à l' {lightgreen}CT-Team {green}, après {lightgreen}{4} {green}est mort!"
+	}
+
+	"AlreadyReset"
+	{
+		"en"		"{1} {green}Your stats are already reset!"
+		"chi"		"{1} {green}你的状态被重置!"
+		"de"		"{1} {green}Deine Statistiken sind bereits zurückgesetzt!"
+	}
+
+	"ResetScore"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}has just reset his score!"
+		"chi"		"{1} {lightgreen}{2} {green}的战绩被重置!"
+		"de"		"{1} {lightgreen}{2} {green}hat seinen Score zurückgesetzt!"
+	}
+
+	"WrongTeam"
+	{
+		"en"		"{1} {green}You must be in a team!"
+		"chi"		"{1} {green}你必须在队伍里!"
+		"de"		"{1} {green}Sie müssen in ein Team sein!"
+	}
+
+	"ExchangeTeams"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}has moved all players to the opponent team!"
+		"chi"		"{1} {lightgreen}{2} {green}执行了换边的操作!"
+		"de"		"{1} {lightgreen}{2} {green}hat alle Spieler ins gegnerische Team verschoben!"
+	}
+
+	"MoveAllT"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}has moved all players to T!"
+		"chi"		"{1} {lightgreen}{2} {green}移动所有玩家到T!"
+		"de"		"{1} {lightgreen}{2} {green}hat alle Spieler ins T Team verschoben!"
+	}
+
+	"MoveAllCT"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}has moved all players to CT!"
+		"chi"		"{1} {lightgreen}{2} {green}移动所有玩家到CT!"
+		"de"		"{1} {lightgreen}{2} {green}hat alle Spieler ins CT Team verschoben!"
+	}
+
+	"MoveAllSpec"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"		"{1} {lightgreen}{2} {green}has moved all players to Spectator!"
+		"chi"		"{1} {lightgreen}{2} {green}移动所有玩家到观看者!"
+		"de"		"{1} {lightgreen}{2} {green}hat alle Spieler ins Zuschauer Team verschoben!"
+	}
+}
