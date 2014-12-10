@@ -25,3 +25,10 @@ before_script:
   
 script:
   - ./spcomp movecommands.sp
+
+notifications:
+  email: 
+    recipients:
+      - webmaster@bara.in
+    on_success: always
+    on_failure: always
