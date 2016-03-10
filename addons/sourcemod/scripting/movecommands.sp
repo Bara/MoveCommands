@@ -3,7 +3,7 @@
 #include <sourcemod>
 #include <sdktools>
 #include <autoexecconfig>
-#include <colors>
+#include <multicolors>
 
 #undef REQUIRE_PLUGIN
 #include <adminmenu>
@@ -76,7 +76,7 @@ public OnPluginStart()
 	
 	Format(sMoveTag, sizeof(sMoveTag), "%T", "MessageTag", LANG_SERVER);
 	
-	CreateConVar("movecommands_version", MOVECOMMANDS_VERSION, MOVECOMMANDS_NAME, FCVAR_PLUGIN|FCVAR_NOTIFY|FCVAR_DONTRECORD);
+	CreateConVar("movecommands_version", MOVECOMMANDS_VERSION, MOVECOMMANDS_NAME, FCVAR_NOTIFY|FCVAR_DONTRECORD);
 	
 	AutoExecConfig_SetFile("plugin.movecommands", "sourcemod");
 	AutoExecConfig_SetCreateFile(true);
