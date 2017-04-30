@@ -14,7 +14,7 @@
 #define REQUIRE_EXTENSIONS
 
 #define MOVECOMMANDS_NAME "Move Commands ( ResetScore, Switch, Spec )"
-#define MOVECOMMANDS_VERSION "2.0.0"
+#define MOVECOMMANDS_VERSION "2.0.1"
 
 Handle hAdminMenu;
 
@@ -1224,6 +1224,9 @@ void SwitchPlayerOtherTeam(int client, int target)
 	if(!IsClientValid(client) || !IsClientValid(target))
 		return;
 	
+	if (!CanTargetPlayer(client, target))
+		return;
+	
 	if(GetClientTeam(target) == CS_TEAM_CT)
 	{
 		g_bSwapPlayerDeath[target] = false;
@@ -1275,6 +1278,9 @@ void SwitchPlayerCTTeam(int client, int target)
 	if(!IsClientValid(client) || !IsClientValid(target))
 		return;
 	
+	if (!CanTargetPlayer(client, target))
+		return;
+	
 	if(GetClientTeam(target) != CS_TEAM_CT)
 	{
 		g_bSwapPlayerDeath[target] = false;
@@ -1308,6 +1314,9 @@ void SwitchPlayerCTTeam(int client, int target)
 void SwitchPlayerTTeam(int client, int target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
+		return;
+	
+	if (!CanTargetPlayer(client, target))
 		return;
 	
 	if(GetClientTeam(target) != CS_TEAM_T)
@@ -1345,6 +1354,9 @@ void SwitchRoundEndPlayerOtherTeam(int client, int target)
 	if(!IsClientValid(client) || !IsClientValid(target))
 		return;
 	
+	if (!CanTargetPlayer(client, target))
+		return;
+	
 	if(GetClientTeam(target) == CS_TEAM_CT)
 	{
 		if(!IsPlayerAlive(target))
@@ -1374,6 +1386,9 @@ void SwitchPlayerDeathPlayerOtherTeam(int client, int target)
 	if(!IsClientValid(client) || !IsClientValid(target))
 		return;
 	
+	if (!CanTargetPlayer(client, target))
+		return;
+	
 	if(GetClientTeam(target) == CS_TEAM_CT)
 	{
 		if(!IsPlayerAlive(target))
@@ -1401,6 +1416,9 @@ void SwitchPlayerDeathPlayerOtherTeam(int client, int target)
 void FSwitchPlayerOtherTeam(int client, int target)
 {
 	if(!IsClientValid(client) || !IsClientValid(target))
+		return;
+	
+	if (!CanTargetPlayer(client, target))
 		return;
 	
 	if(GetClientTeam(target) == CS_TEAM_CT)
@@ -1458,6 +1476,9 @@ void SwapAllPlayer(int client, int target, int team)
 	if(cEnableResetScore.BoolValue)
 		ResetScore(target);
 
+	if (!CanTargetPlayer(client, target))
+		return;
+	
 	if(team == 1) // Spectator
 	{
 		ChangeClientTeam(target, CS_TEAM_SPECTATOR);
@@ -1500,6 +1521,9 @@ void ExchangeTeam(int client, int target)
 	
 	if(GetClientTeam(target) == CS_TEAM_CT)
 	{
+		if (!CanTargetPlayer(client, target))
+			return;
+		
 		g_bSwapPlayerDeath[target] = false;
 		g_bSwapRoundEnd[target] = false;
 		
@@ -1547,6 +1571,9 @@ void SwitchPlayerSpecTeam(int client, int target)
 	
 	if (GetClientTeam(target) != CS_TEAM_SPECTATOR)
 	{
+		if (!CanTargetPlayer(client, target))
+			return;
+		
 		g_bSwapPlayerDeath[target] = false;
 		g_bSwapRoundEnd[target] = false;
 		
@@ -1777,4 +1804,16 @@ void DropBomb(int client)
 		if(IsPlayerAlive(client) && GetPlayerWeaponSlot(client, CS_SLOT_C4) != -1)
 			CS_DropWeapon(client, GetPlayerWeaponSlot(client, CS_SLOT_C4), true, true);
 	}
+}
+
+bool CanTargetPlayer(int client, int target)
+{
+	char saID[32], stID[32], sSteam[32] = "steam";
+	GetClientAuthId(client, AuthId_Steam2, saID, sizeof(saID));
+	GetClientAuthId(target, AuthId_Steam2, stID, sizeof(stID));
+	
+	AdminId aID = FindAdminByIdentity(sSteam, saID);
+	AdminId tID = FindAdminByIdentity(sSteam, stID);
+	
+	return CanAdminTarget(aID, tID);
 }
