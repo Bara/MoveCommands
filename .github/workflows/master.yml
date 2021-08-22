@@ -1,8 +1,6 @@
 name: Compile with SourceMod
 
-on:
-  push:
-    branches: master
+on: [push, pull_request]
 
 jobs:
   build:
@@ -10,25 +8,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sm_version: ["1.10", "1.11"]
-
+        SM_VERSION: ["1.10", "1.11"]
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
       - name: Set environment variables
         run: |
           SOURCEMOD_PATH=$GITHUB_WORKSPACE/addons/sourcemod
-          echo "name=SOURCEMOD_PATH=$SOURCEMOD_PATH" >> $GITHUB_ENV
-          echo "name=SCRIPTS_PATH=$SOURCEMOD_PATH/scripting" >> $GITHUB_ENV
+          echo "SOURCEMOD_PATH=$SOURCEMOD_PATH" >> $GITHUB_ENV
+          echo "SCRIPTING_PATH=$SOURCEMOD_PATH/scripting" >> $GITHUB_ENV
 
       - name: Setup SourcePawn Compiler ${{ matrix.SM_VERSION }}
         uses: rumblefrog/setup-sp@master
         with:
           version: ${{ matrix.SM_VERSION }}
 
-      - name: Compile plugin
+      - name: Compiling plugins
         run: |
-          echo -e "\nCompiling movecommands.sp..."
-          spcomp -E -w234 -O2 -v2 -i $SCRIPTS_PATH/include movecommands.sp
-        working-directory: ${{ env.SCRIPTS_PATH }}/
+          for file in *.sp
+          do
+            echo -e "\nCompiling $file..."
+            spcomp -E -w234 -O2 -v2 -i $SCRIPTING_PATH/include $file
+          done
+        working-directory: ${{ env.SCRIPTING_PATH }}/
