@@ -12,7 +12,7 @@
 #endif
 #define _colors_included
  
-#define MAX_MESSAGE_LENGTH 250
+#define MAX_MESSAGE_LENGTH 512
 #define MAX_COLORS 18
 
 #define SERVER_INDEX 0
@@ -568,7 +568,7 @@ stock void C_SetupProfile() {
 	}
 }
 
-public Action C_Event_MapStart(Event event, const char[] name, bool dontBroadcast) {
+public void C_Event_MapStart(Event event, const char[] name, bool dontBroadcast) {
 	C_SetupProfile();
 
 	for (int i = 1; i <= MaxClients; ++i) {
